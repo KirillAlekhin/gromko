@@ -253,7 +253,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
       <button id="mReset">Сменить группу</button>
       <button class="hot" id="mClose">Назад в игру</button>
     </div>
-    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 17:10</p>
+    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 17:34</p>
   </div></div>
   <div class="modal" id="mk" hidden><div>
     <div class="h2">Своя группа</div>
@@ -1522,8 +1522,9 @@ const SC = (() => {
     html($('#stats'), Object.keys(STATS).map(k => {
       const lvl = s.stats[k], on = s.train && s.train.k === k, w = whyTrain(k), max = lvl >= STAT_MAX;
       return '<button class="stat' + (w && !on ? ' off' : '') + (on ? ' run' : '') + '" data-k="' + k + '"><b>' + STATS[k].n + '</b><em>' + lvl + '/' + STAT_MAX + '</em><i>' + STATS[k].d + '</i>' +
-        (on ? '<span class="bar"><s style="width:' + (s.train.t / s.train.dur * 100) + '%"></s></span>' : '<span class="c">' + (max ? '<u>максимум</u>' : '<u class="m">' + fmt(statCost(k)) + ' ₽</u><u class="e">30' + ZAP + '</u><u>' + (statDur(k) >= 120 ? Math.round(statDur(k) / 60) + ' мин' : statDur(k) + ' с') + '</u>') + '</span>') + '</button>';
+        (on ? '<span class="bar"><s></s></span>' : '<span class="c">' + (max ? '<u>максимум</u>' : '<u class="m">' + fmt(statCost(k)) + ' ₽</u><u class="e">30' + ZAP + '</u><u>' + (statDur(k) >= 120 ? Math.round(statDur(k) / 60) + ' мин' : statDur(k) + ' с') + '</u>') + '</span>') + '</button>';
     }).join(''));
+    if (s.train) { const b = $('#stats .bar s'); if (b) b.style.width = (s.train.t / s.train.dur * 100) + '%'; }   // полоса тренировки меняется стилем, без пересборки списка: иначе на телефоне сбрасывалась прокрутка
     if (!light) html($('#disc'), s.songs.length ? s.songs.slice(-12).reverse().map(x => { const f = songFresh(x); return '<li><span>' + x.n + (x.alb ? ' · альбом' : '') + '</span><span class="q' + x.q + '">' + Q[x.q].n + '</span><span class="age">' + (f > 0.6 ? 'свежая' : f > 0 ? 'на слуху' : 'забыта') + '</span></li>'; }).join('') : '<li>Песен пока нет.</li>');
   }
   $('#who').addEventListener('click', () => { AU.init(); AU.sfx('tap'); renderArtist(); $('#artist').hidden = false; });
