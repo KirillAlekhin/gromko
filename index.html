@@ -246,7 +246,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
       <button id="mReset">Сменить группу</button>
       <button class="hot" id="mClose">Назад в игру</button>
     </div>
-    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 15:41</p>
+    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 16:20</p>
   </div></div>
   <div class="modal" id="mk" hidden><div>
     <div class="h2">Своя группа</div>
@@ -307,7 +307,7 @@ const W_ = {
     'Дорогая Дешёвая Бесплатная Платная Краденая Дарёная Одолженная Забытая Потерянная Найденная Сломанная Починенная Недописанная Недопетая Вырезанная Запрещённая Разрешённая Секретная Открытая Закрытая Знакомая Незнакомая Родная Соседская Общая Ничья ' +
     'Красная Синяя Зелёная Жёлтая Белая Чёрная Серая Розовая Рыжая Бледная Яркая Тёмная Светлая Прозрачная Мутная Блестящая Матовая Золотая Серебряная Медная Железная Деревянная Стеклянная Бумажная Картонная Пластиковая ' +
     'Электрическая Акустическая Танцевальная Медленная Скучная Весёлая Печальная Тревожная Страшная Уютная Одинокая Влюблённая Ревнивая Обиженная Счастливая Несчастная Усталая Больная Здоровая Упрямая Послушная Вредная Полезная Сладкая Горькая Солёная ' +
-    'Кислая Пресная Пряная Копчёная Жареная Варёная Настоящая Поддельная Честная Лживая Красивая Некрасивая Нелепая Гениальная Обычная Никакая Бесконечная Мгновенная Дикая Ручная Бродячая Перелётная Подводная Космическая Земная Небесная').split(' '),
+    'Кислая Пресная Пряная Копчёная Жареная Варёная Настоящая Поддельная Честная Лживая Красивая Некрасивая Нелепая Гениальная Обычная Никакая Бесконечная Мгновенная Дикая Ручная Бродячая Перелётная Подводная Космическая Земная Небесная Паранормальная Шокирующая Классная Сенсационная Невероятная Скандальная Легендарная Убойная Мистическая Потрясающая Эпическая Культовая Взрывная Бомбическая Роскошная Улётная Чумовая Фантастическая Зловещая Аномальная Гипнотическая Радиоактивная Эксклюзивная Божественная Абсурдная Феноменальная Токсичная Отвязная Ошеломительная').split(' '),
   // РЫНОК: существительное и существительное
   rynok: ('Реки Облака Любовь Ненависть Хлеб Соль Брат Сестра Дым Огонь Ночь День Рынок Вокзал Вино Вода Город Поле Правда Долги ' +
     'Деньги Слёзы Радость Горе Друзья Враги Дорога Дом Мать Отец Зима Лето Ветер Камень Золото Ржавчина Кровь Молоко Мёд Дёготь Нож Вилка Чай Табак Карты Кости ' +
@@ -378,15 +378,17 @@ const PERKS = {
 };
 const TH = [0.03, 0.12, 0.28, 0.58];   // пороги броска качества: хит, бэнгер, крепкая, нормальная
 const ROLES = ['Басист', 'Барабанщик', 'Клавишник'];
+// 20 необычных инструментов: достаются нанятым музыкантам случайно (в группах, где состав не задан жёстко)
+const WILD = ['Баян', 'Арфа', 'Тромбон', 'Саксофон', 'Виолончель', 'Банджо', 'Укулеле', 'Терменвокс', 'Волынка', 'Диджериду', 'Ксилофон', 'Флейта', 'Гусли', 'Балалайка', 'Бонги', 'Треугольник', 'Кейтар', 'Гонг', 'Ситар', 'Туба'];
 const ACTS = [
   { id: 'blond', n: 'Блонд с кнопкой', slogan: 'Всё, что у него есть — совесть.', genre: 'фолк', pk: 'regen',
     home: 'Домик в лесу', ppl: 1, maxM: 5, freeM: true, roles: ['Контрабас', 'Клавиши', 'Скрипка', 'Перкуссия', 'Баян'], th: TH },
   { id: 'solt', n: 'Soltcola', slogan: 'Девочки плачут, девочки смеются.', genre: 'рок', pk: 'reel',
     home: 'Комната в панельке', ppl: 1, maxM: 2, roles: ['Барабанщик', 'Гитарист'], th: TH },
   { id: 'vrubel', n: 'VRUBEL', slogan: 'Новый альбом — новый жанр.', genre: 'меняется', pk: 'gig',
-    home: 'Дача', ppl: 2, maxM: 3, roles: ROLES, th: [0.07, 0.17, 0.28, 0.46] },
+    home: 'Дача', ppl: 2, maxM: 3, wild: true, roles: ROLES, th: [0.07, 0.17, 0.28, 0.46] },
   { id: 'rynok', n: 'РЫНОК', slogan: 'Сыграем по-братски, брат!', genre: 'хип-хоп, латино', pk: 'keep',
-    home: 'Гараж', ppl: 2, maxM: 3, roles: ROLES, th: TH },
+    home: 'Гараж', ppl: 2, maxM: 3, wild: true, roles: ROLES, th: TH },
   // трио: группу не усилить; скрытая особенность — хит бывает один раз, зато крепких песен и бэнгеров больше
   { id: 'solnechny', n: 'solnechny', slogan: 'Музыка сердца.', genre: 'рок-баллады', pk: 'fast',
     home: 'Репбаза', ppl: 3, maxM: 0, noUp: true, oneHit: true, roles: [], th: [0.03, 0.30, 0.62, 0.85] }
@@ -418,13 +420,13 @@ function fresh() {
   return { v: 2, act: null, lvl: 0, maxLvl: 0, money: 300, L: 0, E: 100, songs: [], instr: 0, reel: 0, studio: false, members: 0,
     hype: 0, radio: 0, busy: null, albums: 0, t: 0, won: false, mode: null, photo: false,
     stats: { vocal: 0, texts: 0, charisma: 0, stamina: 0 }, train: null, seen: {}, evT: 200, rb: 0, last: 0, offline: null,
-    starAt: 300, peak: 0, done: [], sound: true, custom: null, hitDone: false, street: -1, club: -1, band: [] };
+    starAt: 300, peak: 0, done: [], sound: true, custom: null, hitDone: false, street: -1, club: -1, band: [], roles: [] };
 }
 const S = () => G.S;
 const lv = () => LV[G.S.lvl], M = () => MM[G.S.lvl];
 function act() {
   const s = G.S; if (s.act !== CUSTOM) return ACTS[s.act];
-  const c = s.custom; return { id: 'cust', n: c.n, slogan: 'Своя группа', genre: c.genre, pk: c.pk, home: HOMES[c.home], homeId: c.home, ppl: c.ppl.length, cast: c.ppl, maxM: 3, roles: ROLES, th: TH };
+  const c = s.custom; return { id: 'cust', n: c.n, slogan: 'Своя группа', genre: c.genre, pk: c.pk, home: HOMES[c.home], homeId: c.home, ppl: c.ppl.length, cast: c.ppl, maxM: 3, wild: true, roles: ROLES, th: TH };
 }
 const pk = k => act().pk === k;
 // случайное название группы: «прилагательное + существительное», странная фраза из трёх слов или редкое имя
@@ -558,13 +560,15 @@ const A = [
 
   { id: 'instr', tab: 3, show: () => S().instr < 4 && !act().noUp, name: () => 'Инструмент', tag: () => 'ур. ' + S().instr + '/4', hint: 'Выше шанс сильной песни. Навсегда.',
     cost: () => 1500 * Math.pow(5, S().instr), e: 0, dur: () => 2, done() { S().instr++; log('Новый инструмент звучит плотнее', 'good'); } },
-  { id: 'hire', tab: 3, show: () => S().lvl >= 1 && S().members < act().maxM, name: () => act().roles[S().members] || 'Музыкант',
+  { id: 'hire', tab: 3, show: () => S().lvl >= 1 && S().members < act().maxM, name: () => act().wild ? 'Музыкант' : act().roles[S().members] || 'Музыкант',
     tag: () => act().freeM ? 'играет даром' : fmt(1.5 * M()) + ' ₽/с',
     hint: a => a.freeM ? 'Друг играет даром. +12% к выручке с концертов.' : '+20% к выручке с концертов. Зарплата каждую секунду.',
     lock: () => act().freeM && S().members >= S().lvl ? 'Следующий друг — на новой площадке' : '',
     cost: () => act().freeM ? 0 : 3000 * Math.pow(4, S().members), e: 15, dur: () => 3, done() { const s = S(); s.band = s.band || [];
       if (!act().freeM) { const taken = s.band.concat(act().cast || []); let k = 0; do { k = Math.floor(G.rnd() * POOL_SIZE); } while (taken.includes(k)); s.band[s.members] = k; }   // кто именно пришёл, выбирается случайно из пула
-      s.members++; log('В группе пополнение', 'good'); } },
+      let what = '';
+      if (act().wild) { s.roles = s.roles || []; const free = WILD.filter(w => !s.roles.includes(w)); what = free[Math.floor(G.rnd() * free.length)]; s.roles[s.members] = what; }   // инструмент тоже случайный
+      s.members++; log('В группе пополнение' + (what ? ': ' + what.toLowerCase() : ''), 'good'); } },
   { id: 'studio', tab: 3, show: () => S().lvl >= 2 && !S().studio, name: () => 'Студия', hint: 'Запись дешевле на 60%. Навсегда.',
     cost: () => 200000, e: 0, dur: () => 4, done() { S().studio = true; log('Своя студия. Запись теперь почти даром', 'hit'); } }
 ];
@@ -611,7 +615,7 @@ const EV = [
   { n: 'Отмена концерта', d: 'Площадку закрыли на проверку. Хайп сгорел.', min: 2, ok: s => s.hype > 0, fx: s => { s.hype = 0; } },
   { n: 'Сосед с дрелью', d: 'Запись сорвана, нервы тоже.', max: 1, fx: s => { s.E = Math.max(0, s.E - 25); } },
   { n: 'Порвалась струна', d: 'Минус немного денег на новый комплект.', fx: s => gainM(-Math.min(s.money, 120 * M())) },
-  { n: 'Плейлист редакции', d: 'Трек попал в подборку. Полминуты без оттока.', ok: s => s.songs.length > 0, fx: s => { s.radio = Math.max(s.radio, 40); } },
+  { n: 'Плейлист редакции', d: 'Трек попал в подборку. Полминуты без оттока.', ok: s => s.songs.length > 0, fx: s => { s.radio = Math.max(s.radio, 30); } },
   { n: 'Кавер от звезды', d: 'Известный артист спел твою песню.', min: 2, ok: s => s.songs.length > 0, fx: s => gainL(B() * 5) },
   { n: 'Блокировка трека', d: 'Площадка сняла последнюю песню из-за семпла.', ok: s => s.songs.length > 1, fx: s => { const x = lastSong(); x.left = 0; x.age = 1e9; } },
   { n: 'Щедрый фанат', d: 'Донат с запиской «на струны».', fx: s => gainM(300 * M() + s.L * 2) },
@@ -625,7 +629,38 @@ const EV = [
   { n: 'Фан-клуб', d: 'Фанаты сами расклеили афиши. Хайп растёт.', min: 1, fx: s => { s.hype = Math.min(4, s.hype + 1); } },
   { n: 'Налоговая', d: 'Вспомнили про самозанятость. Минус 8% денег.', min: 3, fx: s => gainM(-s.money * 0.08) },
   { n: 'Дождь', d: 'Прохожих нет, пальцы мёрзнут.', min: 1, max: 1, fx: s => { s.E = Math.max(0, s.E - 15); } },
-  { n: 'Вторая жизнь', d: 'Старая песня внезапно завирусилась в рилсах.', ok: s => s.songs.length > 3, fx: s => { const x = s.songs[Math.floor(G.rnd() * (s.songs.length - 1))]; x.age = 0; x.left += B() * Q[x.q].m; log('«' + x.n + '» снова слушают', 'good'); } }
+  { n: 'Вторая жизнь', d: 'Старая песня внезапно завирусилась в рилсах.', ok: s => s.songs.length > 3, fx: s => { const x = s.songs[Math.floor(G.rnd() * (s.songs.length - 1))]; x.age = 0; x.left += B() * Q[x.q].m; log('«' + x.n + '» снова слушают', 'good'); } },
+  // --- ещё 30 ---
+  { n: 'Трек на стриме', d: 'Блогер включил твою песню в эфире.', min: 1, ok: s => s.songs.length > 0, fx: s => gainL(B() * 4) },
+  { n: 'Свадьба друга', d: 'Сыграл на свадьбе. Заплатили и накормили.', max: 2, fx: s => { gainM(500 * M()); s.E = Math.min(emax(), s.E + 10); } },
+  { n: 'Старый винил', d: 'Нашёл на блошке пластинку. Вдохновился.', fx: s => { s.E = Math.min(emax(), s.E + 30); } },
+  { n: 'Грант', d: 'Город поддержал молодых музыкантов.', min: 2, fx: s => gainM(1500 * M()) },
+  { n: 'Удачный кадр', d: 'Фанат снял тебя красиво. Следующий рилс вдвое сильнее.', min: 2, ok: s => !s.photo, fx: s => { s.photo = true; } },
+  { n: 'Песня в такси', d: 'Таксист крутит твой трек всю смену.', min: 1, ok: s => s.songs.length > 0, fx: s => gainL(B() * 3) },
+  { n: 'Флешмоб', d: 'Под твой трек танцует весь город.', min: 2, ok: s => s.songs.length > 0, fx: s => { gainL(B() * 4); s.hype = Math.min(4, s.hype + 1); } },
+  { n: 'Муза', d: 'Мелодия приснилась. Хит на минуту ближе.', ok: s => s.starAt > s.t, fx: s => { s.starAt = Math.max(s.t, s.starAt - 60); } },
+  { n: 'Роялти', d: 'Пришли отчисления за стриминг.', ok: s => s.songs.length > 2, fx: s => gainM(60 * M() * s.songs.length) },
+  { n: 'Подкаст', d: 'Позвали поговорить о музыке. Вышло душевно.', min: 2, fx: s => gainL(B() * 4) },
+  { n: 'Спонсор', d: 'Бренд струн прислал комплект и гонорар.', min: 3, fx: s => gainM(3000 * M()) },
+  { n: 'Аншлаг', d: 'Билеты разлетелись за час. Хайп на максимуме.', min: 2, ok: s => s.hype < 4, fx: s => { s.hype = 4; } },
+  { n: 'Перевод от бабушки', d: 'Деньги и банка варенья.', max: 1, fx: s => { gainM(400); s.E = Math.min(emax(), s.E + 15); } },
+  { n: 'Сел голос', d: 'Перепел на холоде.', min: 1, fx: s => { s.E = Math.max(0, s.E - 20); } },
+  { n: 'Штраф', d: 'Играл без разрешения.', min: 1, max: 1, fx: s => gainM(-Math.min(Math.max(0, s.money), 300)) },
+  { n: 'Слив демо', d: 'Черновик утёк в сеть. Новая песня уже не новость.', ok: s => s.songs.length > 0, fx: s => { lastSong().left *= 0.7; } },
+  { n: 'Конкуренты', d: 'У соседней группы вышел альбом. Часть ушла к ним.', min: 2, fx: s => loseL(0.05) },
+  { n: 'Сломался ноут', d: 'Проект не сохранился.', fx: s => { gainM(-Math.min(Math.max(0, s.money), 200 * M())); s.E = Math.max(0, s.E - 10); } },
+  { n: 'Отвалился звук', d: 'Посреди песни. Зал разошёлся.', min: 2, fx: s => { loseL(0.04); s.hype = Math.max(0, s.hype - 1); } },
+  { n: 'Алгоритмы', d: 'Соцсеть урезала охваты.', min: 1, fx: s => loseL(0.04) },
+  { n: 'Простуда', d: 'Неделя с чаем и градусником.', fx: s => { s.E = Math.max(0, s.E - 25); } },
+  { n: 'Участковый', d: 'Соседи пожаловались. Попросил потише.', max: 0, fx: s => { s.E = Math.max(0, s.E - 20); } },
+  { n: 'Кинул организатор', d: 'Гонорар обещал «на неделе». Минус 6% денег.', min: 2, fx: s => gainM(-Math.max(0, s.money) * 0.06) },
+  { n: 'Потоп на репбазе', d: 'Залило аппарат.', min: 2, fx: s => gainM(-Math.min(Math.max(0, s.money), 400 * M())) },
+  { n: 'Плагиат', d: 'В песне нашли чужой мотив.', min: 3, ok: s => s.songs.length > 1, fx: s => loseL(0.07) },
+  { n: 'Новый образ', d: 'Сменил причёску. Как повезёт.', fx: s => { G.rnd() < 0.5 ? gainL(B() * 2) : loseL(0.04); } },
+  { n: 'Ремикс', d: 'Диджей переделал трек без спроса. Юрист дорогой.', min: 2, ok: s => s.songs.length > 0, fx: s => { gainL(B() * 4); gainM(-Math.min(Math.max(0, s.money), 200 * M())); } },
+  { n: 'Ночной джем', d: 'Играли до утра. Сил нет, все в восторге.', min: 1, fx: s => { s.E = Math.max(0, s.E - 25); gainL(B() * 3); } },
+  { n: 'Телешоу', d: 'Позвали на ТВ. Как повезёт.', min: 3, fx: s => { G.rnd() < 0.5 ? gainL(B() * 6) : loseL(0.06); } },
+  { n: 'Кот на сцене', d: 'Видео разлетелось, концерт сорван.', min: 2, fx: s => { gainL(B() * 3); s.hype = 0; } }
 ];
 function fireEvent() {
   const s = S(), pool = EV.filter(e => (e.min || 0) <= s.lvl && (e.max == null || e.max >= s.lvl) && (!e.ok || e.ok(s)));
@@ -668,7 +703,7 @@ function offline(now) {
 }
 function collect() { const s = S(), o = s.offline; if (!o) return; s.offline = null; gainM(o.money); log('Донаты, пока тебя не было: +' + fmt(o.money) + ' ₽', 'good'); }
 
-if (typeof module !== 'undefined') module.exports = { bandName, WORDS, CUSTOM, rollCustom, CFG, LV, ACTS, A, AM, G, fresh, tick, B, strike, doAct, why, move, canMove, goalOk, train, whyTrain, statCost, att, lv, singles, lastSong, songFresh, moveCost, aE, STATS, offline, collect };
+if (typeof module !== 'undefined') module.exports = { EV, WILD, bandName, WORDS, CUSTOM, rollCustom, CFG, LV, ACTS, A, AM, G, fresh, tick, B, strike, doAct, why, move, canMove, goalOk, train, whyTrain, statCost, att, lv, singles, lastSong, songFresh, moveCost, aE, STATS, offline, collect };
 
 </script>
 <script>
@@ -1142,22 +1177,47 @@ const SC = (() => {
   const pooled = k => ({ base: 'p_' + k + '_0', f: framesOf('p_' + k + '_0'), i: 0 });
   const CUST_GT = ['#c9584a', null, '#3ddbd9'];   // в своей группе первый и третий с гитарами
   const castOf = (A, v) => A.id === 'cust' ? A.cast.map((k, p) => Object.assign(pooled(k), { gt: CUST_GT[p] })) : CASTS[A.id].map((c, p) => Object.assign({ base: A.id + '_' + p + '_' + v }, c));
-  const STILL = /Барабан|Перкусс|Клавиш|Контрабас/;   // у этих инструмент стоит на месте: по сцене не ходят
+  const STILL = /Барабан|Перкусс|Клавиш|Контрабас|Арфа|Виолончель|Терменвокс|Диджериду|Ксилофон|Гусли|Бонги|Гонг/;   // у этих инструмент стоит на месте: по сцене не ходят
   function guitar(x, y, h, c, k) {
     const hy = y - h * 0.48; const R = (a, b, w, hh, col) => r(x + a * k, hy + b * k, Math.max(1, w * k), Math.max(1, hh * k), col);
     R(-1, 0, 13, 9, '#16112b'); R(0, 1, 11, 7, c); R(3, 3, 4, 3, '#16112b'); for (let i = 0; i < 6; i++) R(-3 - i * 3, -1 - i * 2, 4, 2, '#e8d2a0'); R(-23, -14, 4, 4, '#16112b');
   }
+  // 20 необычных инструментов. Координаты от ступней музыканта: x вправо, y вверх отрицательный
+  const GOLD = '#ffd23f', BR = '#b8860b', WD = '#8a4a22', WL = '#a85e2c', DK = '#3a2418', IV = '#e9e2cf', MT = '#c8c8d0';
+  const WILDP = {
+    'Арфа': R => { R(12, -64, 3, 62, GOLD); R(12, -64, 20, 3, GOLD); for (let i = 0; i < 9; i++) R(30 - i * 2, -62 + i * 7, 3, 7, BR); for (let i = 0; i < 6; i++) R(16 + i * 2.4, -60, 1, 46 - i * 6, IV); R(10, -3, 24, 3, BR); },
+    'Тромбон': R => { R(-24, -56, 28, 2, GOLD); R(-24, -52, 20, 2, GOLD); R(-26, -57, 2, 8, GOLD); R(-28, -59, 3, 12, BR); R(2, -56, 2, 6, GOLD); },
+    'Саксофон': R => { R(-3, -56, 2, 5, '#222'); R(-4, -52, 3, 22, GOLD); R(-8, -32, 7, 4, GOLD); R(-10, -39, 4, 8, GOLD); R(-11, -41, 6, 2, BR); R(-3, -48, 1, 14, BR); },
+    'Виолончель': R => { R(6, -36, 14, 26, WD); R(8, -32, 10, 18, WL); R(12, -60, 2, 24, DK); R(11, -63, 4, 4, DK); R(12, -10, 1, 10, MT); R(10, -26, 1, 6, DK); R(15, -26, 1, 6, DK); R(-8, -27, 24, 1, IV); },
+    'Банджо': R => { R(0, -37, 11, 11, IV); R(1, -36, 9, 9, '#f6f2e6'); R(-1, -38, 13, 1, MT); R(-1, -26, 13, 1, MT); for (let i = 0; i < 6; i++) R(-3 - i * 3, -38 - i * 2, 4, 2, WD); R(-22, -51, 4, 4, DK); },
+    'Укулеле': R => { R(1, -37, 9, 7, '#d9a05a'); R(4, -35, 3, 3, DK); R(-9, -38, 10, 2, WD); R(-12, -39, 4, 4, DK); },
+    'Терменвокс': (R, t) => { R(8, -36, 20, 7, DK); R(10, -34, 16, 3, WD); R(17, -29, 2, 29, '#555'); R(12, -2, 12, 2, '#555'); R(26, -56, 1, 20, MT); R(2, -33, 6, 1, MT); R(2, -38, 1, 5, MT); for (let i = 0; i < 3; i++) R(30 + i * 3, -52 + Math.round(Math.sin(t * 6 + i) * 3), 2, 2, '#3ddbd9'); },
+    'Волынка': R => { R(1, -43, 13, 10, '#3f6b3a'); R(1, -40, 13, 1, '#c9584a'); R(1, -36, 13, 1, '#c9584a'); R(5, -43, 1, 10, '#c9584a'); R(10, -43, 1, 10, '#c9584a'); R(3, -60, 2, 17, DK); R(7, -65, 2, 22, DK); R(11, -58, 2, 15, DK); R(-1, -34, 2, 13, DK); R(-4, -52, 6, 2, DK); },
+    'Диджериду': R => { for (let i = 0; i < 11; i++) R(-3 - i * 2.4, -55 + i * 5, 4, 6, i % 2 ? WD : '#c9584a'); R(-30, -4, 7, 4, DK); },
+    'Ксилофон': R => { R(-18, -31, 36, 3, '#555'); ['#ff4d6d', '#ff8a3d', '#ffd23f', '#7be07b', '#3ddbd9', '#6f93ff', '#b56cff', '#ff4d6d'].forEach((c, i) => R(-17 + i * 4.4, -36 + i * 0.4, 3, 5, c)); R(-16, -28, 2, 28, '#555'); R(14, -28, 2, 28, '#555'); R(-6, -44, 1, 8, IV); R(5, -44, 1, 8, IV); R(-7, -45, 3, 3, '#c9584a'); R(4, -45, 3, 3, '#c9584a'); },
+    'Флейта': R => { R(-18, -57, 24, 2, MT); R(-18, -58, 3, 4, MT); for (let i = 0; i < 4; i++) R(-12 + i * 4, -57, 1, 1, '#555'); },
+    'Гусли': R => { R(-15, -37, 30, 3, WL); R(-13, -34, 26, 3, WL); R(-9, -31, 18, 3, WD); for (let i = 0; i < 7; i++) R(-13 + i * 4, -37, 1, 8 - Math.abs(3 - i), IV); R(-12, -28, 2, 28, DK); R(10, -28, 2, 28, DK); },
+    'Балалайка': R => { for (let i = 0; i < 9; i++) R(7 - i, -41 + i, i * 2 + 1, 1, '#d9a05a'); R(3, -36, 3, 2, DK); for (let i = 0; i < 6; i++) R(3 - i * 3, -43 - i * 2, 4, 2, WD); R(-16, -56, 4, 4, DK); },
+    'Бонги': R => { R(-13, -30, 11, 11, WL); R(-13, -31, 11, 2, IV); R(1, -32, 13, 13, WD); R(1, -33, 13, 2, IV); R(-3, -26, 5, 3, DK); R(-8, -19, 2, 19, '#555'); R(6, -19, 2, 19, '#555'); },
+    'Треугольник': R => { for (let i = 0; i < 10; i++) { R(-10 - i * 0.6, -56 + i, 1, 1, MT); R(-10 + i * 0.6, -56 + i, 1, 1, MT); } R(-16, -46, 10, 1, MT); R(-10, -60, 1, 4, '#555'); R(-3, -52, 1, 7, MT); },
+    'Кейтар': R => { R(-6, -41, 22, 7, '#ff4d6d'); R(-4, -40, 16, 2, IV); for (let i = 0; i < 5; i++) R(-3 + i * 3, -40, 1, 1, '#222'); R(-18, -43, 13, 2, '#222'); R(-20, -44, 3, 4, '#555'); R(12, -37, 3, 2, GOLD); },
+    'Гонг': R => { R(8, -62, 2, 62, '#555'); R(30, -62, 2, 62, '#555'); R(8, -62, 24, 2, '#555'); R(13, -54, 14, 16, '#d8b04a'); R(11, -51, 18, 10, '#d8b04a'); R(17, -49, 6, 6, BR); R(15, -60, 1, 6, MT); R(24, -60, 1, 6, MT); R(4, -34, 6, 1, WD); R(2, -36, 4, 4, '#c9584a'); },
+    'Ситар': R => { R(2, -35, 11, 10, '#c98a4a'); R(4, -33, 7, 6, '#d9a05a'); for (let i = 0; i < 10; i++) R(-1 - i * 2.4, -37 - i * 2.6, 4, 3, WD); for (let i = 0; i < 3; i++) R(-22 + i * 3, -64 + i * 3, 2, 3, IV); },
+    'Туба': R => { R(1, -52, 11, 20, GOLD); R(-2, -64, 17, 5, GOLD); R(-4, -67, 21, 3, BR); R(3, -34, 9, 6, BR); R(-3, -50, 5, 2, GOLD); R(4, -46, 5, 1, BR); R(4, -42, 5, 1, BR); }
+  };
+  let t0 = 0;
   function drawProp(role, x, y, big) {
     const k = big ? 1 : 0.65, R = (a, b, w, h, c) => r(x + a * k, y + b * k, Math.max(1, w * k), Math.max(1, h * k), c);
     if (/Барабан|Перкусс/.test(role)) { R(-12, -22, 24, 3, '#888'); R(-10, -19, 20, 14, '#c9584a'); R(-10, -19, 20, 2, '#e9e2cf'); R(-16, -30, 8, 2, '#ffd23f'); R(-13, -28, 1, 26, '#666'); }
     else if (/Клавиш/.test(role)) { R(-16, -34, 32, 6, '#1b1b22'); R(-15, -33, 30, 2, '#e9e2cf'); R(-12, -28, 2, 28, '#555'); R(10, -28, 2, 28, '#555'); }
+    else if (WILDP[role]) WILDP[role](R, t0);
     else if (/Басист/.test(role)) { const hh = big ? 72 : 46; guitar(x, y, hh, '#7a2a3a', k); }
     else if (/Скрипка/.test(role)) { R(-14, -52, 9, 5, '#a85e2c'); R(-12, -51, 5, 3, '#8a4a22'); R(-22, -54, 9, 2, '#3a2418'); R(-20, -58, 16, 1, '#e9e2cf'); }
     else if (/Баян/.test(role)) { R(-12, -44, 7, 18, '#8a1f2a'); R(5, -44, 7, 18, '#8a1f2a'); R(-5, -44, 10, 18, '#e9e2cf'); for (let i = 0; i < 4; i++) R(-4 + i * 2.5, -44, 1, 18, '#3a2418'); R(-11, -41, 2, 2, '#ffd23f'); R(-11, -36, 2, 2, '#ffd23f'); }
     else if (/Контрабас/.test(role)) { R(8, -44, 12, 30, '#8a4a22'); R(10, -40, 8, 22, '#a85e2c'); R(13, -64, 2, 22, '#3a2418'); R(12, -68, 4, 5, '#3a2418'); }
   }
   function draw(ctx, t, V) {
-    g = ctx; g.imageSmoothingEnabled = false;
+    g = ctx; g.imageSmoothingEnabled = false; t0 = t;
     const S = V.S, L = S.lvl, A = V.act, b = S.busy;
     const music = b && ['song', 'feat', 'album', 'gig', 'tour', 'reel', 'star', 'corp'].includes(b.id), gig = !!(b && (b.id === 'gig' || b.id === 'tour'));
     g.setTransform(1, 0, 0, 1, 0, 0);
@@ -1173,7 +1233,7 @@ const SC = (() => {
     const PLAY_STILL = ['hop', 'sway', 'headbang', 'squat', 'shake', 'rock', 'spin', 'nodfast', 'bounce', 'tilt', 'play', 'play'];
     const REST_STILL = ['turn', 'hop', 'stretch', 'swayslow', 'nod', 'idle', 'idle', 'idle', 'idle'];
     order.forEach((o, i) => {
-      const lead = o.p != null, role = lead ? '' : A.roles[o.m], still = STILL.test(role), id = lead ? o.p : 10 + o.m;
+      const lead = o.p != null, role = lead ? '' : ((A.wild && S.roles && S.roles[o.m]) || A.roles[o.m]), still = STILL.test(role), id = lead ? o.p : 10 + o.m;
       const c = lead ? cast[o.p] : A.freeM ? { one: 'm_' + A.id + '_' + o.m, f: [0], i: 0 } : pooled(band[o.m] != null ? band[o.m] : Math.floor(hash(o.m, A.ppl * 7 + 3) * 30));
       const nameOf = fr => pre + (c.one || c.base + '_' + fr);
       const bx = x0 + i * gap, y = feet - (lead ? 0 : 3); let x = bx;
@@ -1318,7 +1378,7 @@ const SC = (() => {
 
   /* ---------- обучение: два экрана, показываются один раз при первой игре ---------- */
   const TOUR = [
-    { at: 'bottom', next: 'Дальше', items: [['#who', 'Прокачай вокал и харизму. Это поможет!'], ['#menuB', 'Цели уровня, смена состава и другие моменты.'], ['.res', 'Песни приносят рубли. Слушатели уходят сами. Энтузиазм копится, пока отдыхаешь.']] },
+    { at: 'bottom', next: 'Дальше', items: [['#who', 'Прокачай вокал и харизму. Это поможет!'], ['.res', 'Песни приносят рубли. Слушатели уходят сами. Энтузиазм копится, пока отдыхаешь.']] },
     { at: 'top', next: 'Играть', items: [['#goalBox', 'Цели уровня.'], ['#tabs', 'Пиши, продвигай, зарабатывай!'], ['#list', 'Первое нажатие покажет подсказку.']] }
   ];
   let tourStep = 0;
