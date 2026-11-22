@@ -172,9 +172,8 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
 .pill{font-size:3.5cqw;font-weight:600}.res .lbl{font-size:3.3cqw}.act i{font-size:3.3cqw}.log{font-size:3.9cqw}.card small,.card em,.card i,.stat i{font-size:3.5cqw}
 /* обучение: подсвеченные элементы с номерами и легенда */
 #tour{position:absolute;inset:0;z-index:7;background:rgba(10,8,24,.62);font-size:4.1cqw;font-weight:500}
-#tour .hl{position:absolute;outline:.8cqw solid var(--coin);background:rgba(255,210,63,.16);pointer-events:none}
-#tour .hl b,#tour li b{font-family:var(--px);font-weight:400!important;background:var(--coin);color:var(--edge);width:6cqw;height:6cqw;display:flex;align-items:center;justify-content:center;font-size:3.8cqw;flex:none}
-#tour .hl b{position:absolute;left:-2cqw;top:-3.4cqw;box-shadow:0 0 0 .6cqw var(--edge)}
+#tour .hl{position:absolute;outline:1cqw solid var(--coin);background:rgba(255,255,255,.1);pointer-events:none}
+#tour li b{width:4cqw;height:4cqw;flex:none;margin-top:.6cqw}
 #tour .leg{position:absolute;left:4cqw;right:4cqw;background:var(--panel);padding:3.4cqw;display:flex;flex-direction:column;gap:2.4cqw;box-shadow:0 0 0 1cqw var(--edge),0 2cqw 0 1cqw var(--hot)}
 #tour ol{list-style:none;display:flex;flex-direction:column;gap:2cqw}
 #tour li{display:flex;gap:2.4cqw;align-items:flex-start;line-height:1.25}
@@ -247,7 +246,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
       <button id="mReset">Сменить группу</button>
       <button class="hot" id="mClose">Назад в игру</button>
     </div>
-    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 15:40</p>
+    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 15:41</p>
   </div></div>
   <div class="modal" id="mk" hidden><div>
     <div class="h2">Своя группа</div>
@@ -1324,9 +1323,9 @@ const SC = (() => {
   ];
   let tourStep = 0;
   function showTour(n) {
-    tourStep = n; const T = TOUR[n], fr = $('.frame').getBoundingClientRect(), base = n === 0 ? 0 : TOUR[0].items.length;
-    $('#tourHl').innerHTML = T.items.map(([sel], i) => { const r = $(sel).getBoundingClientRect(); return '<div class="hl" style="left:' + (r.left - fr.left) + 'px;top:' + (r.top - fr.top) + 'px;width:' + r.width + 'px;height:' + r.height + 'px"><b>' + (base + i + 1) + '</b></div>'; }).join('');
-    $('#tourList').innerHTML = T.items.map(([, text], i) => '<li><b>' + (base + i + 1) + '</b><span>' + text + '</span></li>').join('');
+    tourStep = n; const T = TOUR[n], fr = $('.frame').getBoundingClientRect(), COL = ['#ffd23f', '#3ddbd9', '#ff4d6d'];   // без номеров: рамка и метка в легенде одного цвета
+    $('#tourHl').innerHTML = T.items.map(([sel], i) => { const r = $(sel).getBoundingClientRect(); return '<div class="hl" style="left:' + (r.left - fr.left) + 'px;top:' + (r.top - fr.top) + 'px;width:' + r.width + 'px;height:' + r.height + 'px;outline-color:' + COL[i] + '"></div>'; }).join('');
+    $('#tourList').innerHTML = T.items.map(([, text], i) => '<li><b style="background:' + COL[i] + '"></b><span>' + text + '</span></li>').join('');
     $('#tourGo').textContent = T.next; const leg = $('#tourLeg'); leg.style.top = T.at === 'top' ? '14cqw' : ''; leg.style.bottom = T.at === 'bottom' ? '8cqw' : '';
     G.S.seen.tour = 1; $('#tour').hidden = false;
   }
