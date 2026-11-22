@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* знак рубля одним начертанием во всех шрифтах: свой глиф, иначе в заголовочном шрифте он подставлялся из системного */
+@font-face{font-family:GVRub;src:url(data:font/ttf;base64,AAEAAAAKAIAAAwAgT1MvMmYCZQEAAAEoAAAAYGNtYXAADCEQAAABkAAAADRnbHlmi5xh1QAAAcwAAABAaGVhZC/diDQAAACsAAAANmhoZWEF/AIBAAAA5AAAACRobXR4BIgAFAAAAYgAAAAIbG9jYQAgAAAAAAHEAAAABm1heHAABgAUAAABCAAAACBuYW1lHBYpjAAAAgwAAABacG9zdHZocdcAAAJoAAAALAABAAAAAQAAKDaBIV8PPPUAAwPoAAAAAOcooj0AAAAA5yiiPQAUAAACYgLaAAAAAwACAAAAAAAAAAEAAAOE/zgAAAKUABQAMgJiAAEAAAAAAAAAAAAAAAAAAAACAAEAAAACABIAAwAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAwJEAZAABQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAPz8/PwAAIL0gvQOE/zgAAAOEAMgAAAAAAAAAAAAAAAAAAAAgAAAB9AAAApQAFAAAAAIAAAADAAAAFAADAAEAAAAUAAQAIAAAAAQABAABAAAgvf//AAAgvf//30QAAQAAAAAAAAAAACAAAAADABQAAAJiAtoABwANABEAADMRIRcVByMVETM3NScjAzUhFVoBfIyMyIweHoz6Aa4C2ozIjPoBkB54Hv4Wbm4AAAAEADYAAQAAAAAAAQAFAAAAAQAAAAAAAgAHAAUAAwABBAkAAQAKAAwAAwABBAkAAgAOABZHVlJ1YlJlZ3VsYXIARwBWAFIAdQBiAFIAZQBnAHUAbABhAHIAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAECBXJ1Ymxl) format('truetype');unicode-range:U+20BD}
 :root{
   /* layout: one 9:16 phone frame; logo bar, resources, pixel scene, goal strip, tabbed action tiles */
   --night:#15112b;      /* backdrop */
@@ -21,8 +23,8 @@
   --fire:#ff8a3d;       /* enthusiasm */
   --ok:#7be07b;
   --edge:#0a0818;
-  --font:"Onest","Trebuchet MS",Verdana,sans-serif;        /* текст */
-  --px:"Dela Gothic One","Arial Black",Impact,sans-serif;   /* названия и цифры: афишный гротеск */
+  --font:"GVRub","Onest","Trebuchet MS",Verdana,sans-serif;        /* текст */
+  --px:"GVRub","Dela Gothic One","Arial Black",Impact,sans-serif;   /* названия и цифры: афишный гротеск */
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -75,7 +77,10 @@ img.px,canvas{image-rendering:pixelated;image-rendering:crisp-edges}
 .log{padding:1.4cqw 3cqw;font-size:.9em;min-height:11cqw;display:flex;align-items:center;background:var(--edge)}
 .log.good{color:var(--ok)}.log.bad{color:var(--hot)}.log.hit{color:var(--coin)}
 
-.goal{margin:2cqw 3cqw 0;background:var(--panel);padding:1.6cqw 2cqw;display:flex;flex-direction:column;gap:1.2cqw;border-left:1.2cqw solid var(--hot)}
+.goal{flex:none;padding:0 3cqw 2.4cqw;display:flex;flex-direction:column;gap:1.2cqw;background:var(--night)}
+.gsep{display:flex;align-items:center;gap:2cqw;color:var(--dim);font-size:3.3cqw;letter-spacing:.08em;text-transform:uppercase}
+.gsep::before,.gsep::after{content:'';flex:1;height:.6cqw;background:var(--panel-hi)}
+.zap{width:.62em;height:.9em;vertical-align:-.12em;margin-left:.15em;fill:currentColor}
 .goal .row{display:flex;gap:1.4cqw;align-items:center;flex-wrap:wrap}
 .goal .t{color:var(--dim);flex:1}
 .goal{cursor:pointer}
@@ -92,7 +97,7 @@ img.px,canvas{image-rendering:pixelated;image-rendering:crisp-edges}
 .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:1cqw;padding:2cqw 3cqw 0}
 .tabs button{padding:1.8cqw 0;background:var(--panel);color:var(--dim);font-weight:600}
 .tabs button[aria-selected="true"]{background:var(--ink);color:var(--edge)}
-.list{flex:1;min-height:0;overflow-y:auto;padding:1.8cqw 3cqw 3cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6cqw;align-content:start;scrollbar-width:none}
+.list{flex:1;min-height:0;overflow-y:auto;padding:1.8cqw 3cqw 2cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6cqw;align-content:start;scrollbar-width:none}
 .list::-webkit-scrollbar{display:none}
 .act{display:flex;flex-direction:column;gap:.5cqw;text-align:left;background:var(--panel-hi);padding:1.8cqw 2cqw 1.6cqw;box-shadow:0 .9cqw 0 var(--edge);min-height:18cqw;min-width:0}
 .act:active{transform:translateY(.5cqw);box-shadow:0 .4cqw 0 var(--edge)}
@@ -193,7 +198,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
     <div class="res">
       <div><span class="num"><span id="rM">0</span></span><span class="lbl">рубли</span></div>
       <div><span class="num"><span id="rL">0</span><small id="rLd"></small></span><span class="lbl">слушатели</span></div>
-      <div><span class="num"><span id="rE">100</span></span><span class="lbl">энтузиазм</span><div class="ebar"><i id="eBar"></i></div></div>
+      <div><span class="num"><span id="rE">100</span></span><span class="lbl">энергия</span><div class="ebar"><i id="eBar"></i></div></div>
     </div>
     <div class="scene" id="scene">
       <canvas id="cv" width="240" height="150"></canvas>
@@ -204,14 +209,15 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
       <div class="prog" id="prog" hidden><span id="progL"></span><div class="bar"><i id="progB"></i></div></div>
     </div>
     <div class="log" id="log"></div>
-    <div class="goal" id="goalBox">
-      <div class="row"><div class="t" id="goalT"></div><button class="move" id="move"></button></div>
-      <div class="row" id="pills"></div>
-    </div>
     <div class="tabs" role="tablist" id="tabs">
       <button role="tab" data-t="0"></button><button role="tab" data-t="1"></button><button role="tab" data-t="2"></button><button role="tab" data-t="3"></button>
     </div>
     <div class="list" id="list"></div>
+    <div class="goal" id="goalBox">
+      <div class="gsep"><span>цель</span></div>
+      <div class="row"><div class="t" id="goalT"></div><button class="move" id="move"></button></div>
+      <div class="row" id="pills"></div>
+    </div>
   </div>
 
   <div class="over" id="artist" hidden>
@@ -246,7 +252,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
       <button id="mReset">Сменить группу</button>
       <button class="hot" id="mClose">Назад в игру</button>
     </div>
-    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 16:20</p>
+    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 16:44</p>
   </div></div>
   <div class="modal" id="mk" hidden><div>
     <div class="h2">Своя группа</div>
@@ -330,6 +336,22 @@ const W_ = {
   phNoun: 'кот поезд сосед дождь брат чайник вторник лифт автобус почтальон'.split(' '),
   phV3: 'придёт спит знает ждёт поёт вернётся звонит помнит уедет ответит'.split(' '),
   phPast: 'звонил пришёл заметил просил ждал помнил спрашивал обещал'.split(' '),
+  // переиначенные названия песен групп-прототипов: [оригинал, название в игре]. Выпадают вперемешку с обычными
+  proto: {
+    blond: [['Кухни', 'Прихожие'], ['Камушки', 'Булыжнички'], ['Маяки', 'Буйки'], ['Свои', 'Наши'], ['Сидр', 'Квас'], ['Фонарь', 'Торшер'], ['Декаданс', 'Ренессанс'], ['Снег', 'Град'],
+      ['Любовь', 'Симпатия'], ['Радость', 'Бодрость'], ['Дом', 'Сруб'], ['Катастроф', 'Неприятностей'], ['На дно', 'На чердак'], ['Путешествие', 'Командировка'], ['Газ', 'Пар']],
+    solt: [['Молоды', 'Моложавы'], ['Пьяные танцы', 'Трезвые пляски'], ['Ставь чайник', 'Грей кофейник'], ['Умирать или убивать', 'Опоздать или проспать'], ['Не прикасайся', 'Не облокачивайся'],
+      ['Выздороветь', 'Отоспаться'], ['Представь', 'Прикинь'], ['Рандеву', 'Тет-а-тет'], ['Сказать в глаза', 'Шепнуть на ушко'], ['Ты же тоже', 'Я же тоже'], ['Берегу', 'Стерегу'],
+      ['Песня про кота', 'Баллада про пса'], ['Пришла весна', 'Ушла зима'], ['Снежная', 'Дождливая'], ['Чучело', 'Пугало'], ['Кудрями рыжими', 'Косами русыми']],
+    solnechny: [['Сердце', 'Печень'], ['Проливные дожди', 'Грибные дожди'], ['Найти', 'Потерять'], ['Больше чем я мог пообещать', 'Меньше, чем обещал'], ['Ладонями', 'Локтями'], ['Прощай', 'Привет'],
+      ['Гудбай, моя любовь!', 'Хэллоу, моя любовь!'], ['Море', 'Озеро'], ['Будь со мной', 'Будь как дома'], ['Что в моей голове?', 'Что в моём холодильнике?'], ['Мы', 'Вы'], ['Жить', 'Быть'],
+      ['Мы с тобою не умрем', 'Мы с тобою не уснём'], ['Злой', 'Добрый'], ['Край', 'Центр'], ['Да ты меня прости', 'Да ты меня пойми'], ['Оставим здесь', 'Заберём с собой'], ['Блик', 'Луч'],
+      ['Утонем', 'Всплывём'], ['Waste My Time', 'Save My Time']],
+    rynok: [['Взгляд', 'Прищур'], ['Дай мне любовь свою', 'Дай мне скидку свою'], ['До 30', 'До зарплаты'], ['К утру', 'К обеду'], ['Сколько лет', 'Сколько стоит'], ['Следы', 'Отпечатки'], ['Текстура', 'Фактура']],
+    vrubel: [['200', '300'], ['Буря', 'Штиль'], ['Засыпай', 'Просыпайся'], ['Иллюзия', 'Галлюцинация'], ['Лидокаин', 'Парацетамол'], ['Обмани меня', 'Обсчитай меня'], ['Плацебо', 'Витаминка'],
+      ['Плевать', 'Чихать'], ['Прихоть', 'Каприз'], ['Стану песней', 'Стану рилсом'], ['Тайны', 'Сплетни'], ['Хоррор', 'Триллер'], ['Через тернии в никуда', 'Через пробки в никуда'],
+      ['Я буду ждать', 'Я подожду'], ['Нормальная музыка', 'Ненормальная музыка']]
+  },
   // способ 3: редкое имя
   rare: ('Евстигней Аполлинария Серафима Пантелеймон Агафья Харитон Феврония Мефодий Евдокия Варфоломей Пелагея Никодим Устинья Ефросинья Трифон Акулина Прохор Матрёна Ермолай Глафира ' +
     'Савелий Фёкла Тихон Капитолина Лукерья Архип Домна Елисей Зиновий Маврикий Олимпиада Порфирий Степанида Фаддей Христофор Эраст Юлиан Ярополк Мирон Аграфена').split(' ')
@@ -348,9 +370,9 @@ const CFG = {
   TAU: 50,            // сек: за это время песня отдаёт ~63% своих слушателей
   FORGET: 5,          // через FORGET*TAU песня забыта
   PCT: 0.02,          // в режиме престижа охват растёт вместе с аудиторией: +PCT*L к базовому охвату
-  DECAY: [0.0025, 0.0016, 0.0016, 0.0016, 0.0016, 0.0016], // отток в секунду по площадкам
+  DECAY: [0.002, 0.00128, 0.00128, 0.00128, 0.00128, 0.00128], // отток в секунду по площадкам
   STREAM: 0.04,       // ₽ в секунду за слушателя
-  REGEN: 1.25,        // энтузиазм в секунду в простое
+  REGEN: 1.5,         // энергия в секунду в простое
   ATTEND: 0.10,       // доля слушателей, приходящая на концерт без хайпа
   ROLLBACK_AT: 0.5,   // доля цели прошлой площадки, ниже которой начинается откат
   ROLLBACK_T: 60,     // сек до отката
@@ -361,19 +383,19 @@ const CFG = {
   WORLD: 8e9
 };
 const LV = [
-  { n: 'Дом',             cap: 0,     ticket: 0,    rent: 0,       B: 3.5,  goalL: 50,    goalS: 3,  cost: 500,     buy: 'Усилок' },
-  { n: 'Улица',           cap: 0,     ticket: 0,    rent: 0,       B: 10,  goalL: 200,   goalS: 6,  cost: 5000,    buy: 'Демо' },
-  { n: 'Клуб на районе',  cap: 50,    ticket: 300,  rent: 2000,    B: 18, goalL: 600,   goalS: 10, cost: 40000,   buy: 'Звукач' },
-  { n: 'Клуб «16 кг»',    cap: 200,   ticket: 500,  rent: 15000,   B: 36, goalL: 1500,  goalS: 15, cost: 300000,  buy: 'Шоу' },
-  { n: 'Suburban',        cap: 800,   ticket: 800,  rent: 100000,  B: 120, goalL: 4000,  goalS: 20, goalA: 1, cost: 2000000, buy: 'Стадион' },
-  { n: 'Стадион',         cap: 10000, ticket: 2000, rent: 1000000, B: 230, goalL: 10000, goalS: 0 }
+  { n: 'Дом',             cap: 0,     ticket: 0,    rent: 0,       B: 4,    goalL: 50,    goalS: 3,  cost: 500,     buy: 'Усилок' },
+  { n: 'Улица',           cap: 0,     ticket: 0,    rent: 0,       B: 11.5, goalL: 200,   goalS: 6,  cost: 5000,    buy: 'Демо' },
+  { n: 'Клуб на районе',  cap: 50,    ticket: 300,  rent: 2000,    B: 21, goalL: 600,   goalS: 10, cost: 40000,   buy: 'Звукач' },
+  { n: 'Клуб «16 кг»',    cap: 200,   ticket: 500,  rent: 15000,   B: 41, goalL: 1500,  goalS: 15, cost: 300000,  buy: 'Шоу' },
+  { n: 'Suburban',        cap: 800,   ticket: 800,  rent: 100000,  B: 138, goalL: 4000,  goalS: 20, goalA: 1, cost: 2000000, buy: 'Стадион' },
+  { n: 'Стадион',         cap: 10000, ticket: 2000, rent: 1000000, B: 265, goalL: 10000, goalS: 0 }
 ];
 const STREETS = ['Проспект', 'Бульвар', 'Площадь', 'Набережная', 'У ларьков'];   // вариант улицы выпадает случайно
 const CLUBS = ['Клуб «Подвал»', 'Бар «Неон»', 'Арт-кафе', 'Паб'];   // вариант маленького клуба тоже случайный
 const MM = [1, 1, 5, 20, 80, 300], REC = [0, 100, 400, 1500, 5000, 15000];
 const Q = [{ n: 'проходняк', m: 0.5 }, { n: 'нормальная', m: 1 }, { n: 'крепкая', m: 2 }, { n: 'бэнгер', m: 4 }, { n: 'ХИТ', m: 10 }];
 const PERKS = {
-  regen: 'Энтузиазм +30%', reel: 'Рилсы +30%', gig: 'Концерты +20%', keep: 'Отток −20%',
+  regen: 'Энергия +30%', reel: 'Рилсы +30%', gig: 'Концерты +20%', keep: 'Отток −20%',
   fast: 'Песни на 25% быстрее', cheap: 'Запись −30%', promo: 'Промо +20%'
 };
 const TH = [0.03, 0.12, 0.28, 0.58];   // пороги броска качества: хит, бэнгер, крепкая, нормальная
@@ -476,8 +498,9 @@ function loseL(share) { const l = G.S.L * share; G.S.L -= l; if (l >= 1) emit('f
 function songName() {
   const id = act().id, pick = w => w[Math.floor(G.rnd() * w.length)];
   for (let i = 0; i < 30; i++) {
-    let n;
-    if (id === 'vrubel') n = pick(WORDS.vrubel) + ' музыка';
+    let n; const pr = WORDS.proto[id];
+    if (pr && G.rnd() < 0.25) n = pick(pr)[1];   // каждая четвёртая песня: переиначенное название прототипа
+    else if (id === 'vrubel') n = pick(WORDS.vrubel) + ' музыка';
     else if (id === 'rynok') { const a = pick(WORDS.rynok), b = pick(WORDS.rynok); if (a === b) continue; n = a + ' и ' + b.toLowerCase(); }
     else if (id === 'solnechny') n = G.rnd() < 0.5 ? pick(WORDS.organs) : pick(WORDS.wA) + ' ' + pick(WORDS.wN);
     else if (id === 'cust') n = pick(WORDS.custA) + ' ' + pick(WORDS.custN);
@@ -1377,8 +1400,9 @@ const SC = (() => {
   $('#goalOk').addEventListener('click', () => { $('#goalM').hidden = true; if (!G.S.seen.tour) showTour(0); });
 
   /* ---------- обучение: два экрана, показываются один раз при первой игре ---------- */
+  const ZAP = '<svg class="zap" viewBox="0 0 5 7" shape-rendering="crispEdges" aria-label="энергии"><path d="M3 0h2v1h-1v1h-1v1h2v1h-1v1h-1v1h-1v1h-1v-1h1v-1h1v-1h-2v-1h1v-1h1v-1h1z"/></svg>';   // значок энергии вместо «эн.»
   const TOUR = [
-    { at: 'bottom', next: 'Дальше', items: [['#who', 'Прокачай вокал и харизму. Это поможет!'], ['.res', 'Песни приносят рубли. Слушатели уходят сами. Энтузиазм копится, пока отдыхаешь.']] },
+    { at: 'bottom', next: 'Дальше', items: [['#who', 'Прокачай вокал и харизму. Это поможет!'], ['.res', 'Песни приносят рубли. Слушатели уходят сами. Энергия копится, пока отдыхаешь.']] },
     { at: 'top', next: 'Играть', items: [['#goalBox', 'Цели уровня.'], ['#tabs', 'Пиши, продвигай, зарабатывай!'], ['#list', 'Первое нажатие покажет подсказку.']] }
   ];
   let tourStep = 0;
@@ -1419,7 +1443,7 @@ const SC = (() => {
     if (s.mode === 'prestige') {
       html($('#goalT'), 'Престиж: <b>' + fmt(s.L) + '</b> из 8 млрд'); html($('#pills'), pill(false, 'рекорд ' + fmt(s.peak))); mv.hidden = true;
     } else {
-      html($('#goalT'), (nx ? 'Цель: <b>' + nx.n + '</b>' : 'Цель: <b>победа</b>') + ' <u class="q">?</u>');
+      html($('#goalT'), (nx ? '<b>' + nx.n + '</b>' : '<b>Победа</b>') + ' <u class="q">?</u>');
       html($('#pills'), goalRows().map(([n, cur, need, u]) => pill(cur >= need, n.toLowerCase() + ' ' + fmt(Math.min(cur, need)) + '/' + fmt(need) + u)).join(''));
       if (nx) { mv.hidden = false; set(mv, 'Переехать'); mv.classList.toggle('off', !canMove()); mv.classList.toggle('go', canMove()); } else mv.hidden = true;
     }
@@ -1436,7 +1460,7 @@ const SC = (() => {
     list.querySelectorAll('.act').forEach(el => {
       const a = AM[el.dataset.id], w = why(a), c = a.cost(), e = aE(a);
       set(el.children[1], a.tag ? a.tag() : '');
-      html(el.children[2], (c ? '<u class="m">' + fmt(c) + ' ₽</u>' : '') + (e ? '<u class="e">' + e + ' эн.</u>' : '') + (!c && !e ? '<u class="m">даром</u>' : ''));
+      html(el.children[2], (c ? '<u class="m">' + fmt(c) + ' ₽</u>' : '') + (e ? '<u class="e">' + e + ZAP + '</u>' : '') + (!c && !e ? '<u class="m">даром</u>' : ''));
       el.classList.toggle('off', !!w); el.classList.toggle('run', !!(s.busy && s.busy.id === a.id));
     });
     if (!$('#artist').hidden) renderArtist(true);
@@ -1451,7 +1475,7 @@ const SC = (() => {
       s.seen[id] = 1; pending = id;
       $('#hintT').textContent = a.name(); $('#hintD').textContent = aHint(a);
       const c = a.cost(), e = aE(a);
-      $('#hintC').textContent = (c ? fmt(c) + ' ₽' : 'Бесплатно') + (e ? ' · ' + e + ' энтузиазма' : '') + ' · ' + Math.round(a.dur()) + ' с';
+      $('#hintC').textContent = (c ? fmt(c) + ' ₽' : 'Бесплатно') + (e ? ' · ' + e + ' энергии' : '') + ' · ' + Math.round(a.dur()) + ' с';
       $('#hintGo').hidden = !!why(a); $('#hint').hidden = false; AU.sfx('tap'); return;
     }
     const w = why(a);
@@ -1497,7 +1521,7 @@ const SC = (() => {
     html($('#stats'), Object.keys(STATS).map(k => {
       const lvl = s.stats[k], on = s.train && s.train.k === k, w = whyTrain(k), max = lvl >= STAT_MAX;
       return '<button class="stat' + (w && !on ? ' off' : '') + (on ? ' run' : '') + '" data-k="' + k + '"><b>' + STATS[k].n + '</b><em>' + lvl + '/' + STAT_MAX + '</em><i>' + STATS[k].d + '</i>' +
-        (on ? '<span class="bar"><s style="width:' + (s.train.t / s.train.dur * 100) + '%"></s></span>' : '<span class="c">' + (max ? '<u>максимум</u>' : '<u class="m">' + fmt(statCost(k)) + ' ₽</u><u class="e">30 эн.</u><u>' + (statDur(k) >= 120 ? Math.round(statDur(k) / 60) + ' мин' : statDur(k) + ' с') + '</u>') + '</span>') + '</button>';
+        (on ? '<span class="bar"><s style="width:' + (s.train.t / s.train.dur * 100) + '%"></s></span>' : '<span class="c">' + (max ? '<u>максимум</u>' : '<u class="m">' + fmt(statCost(k)) + ' ₽</u><u class="e">30' + ZAP + '</u><u>' + (statDur(k) >= 120 ? Math.round(statDur(k) / 60) + ' мин' : statDur(k) + ' с') + '</u>') + '</span>') + '</button>';
     }).join(''));
     if (!light) html($('#disc'), s.songs.length ? s.songs.slice(-12).reverse().map(x => { const f = songFresh(x); return '<li><span>' + x.n + (x.alb ? ' · альбом' : '') + '</span><span class="q' + x.q + '">' + Q[x.q].n + '</span><span class="age">' + (f > 0.6 ? 'свежая' : f > 0 ? 'на слуху' : 'забыта') + '</span></li>'; }).join('') : '<li>Песен пока нет.</li>');
   }
