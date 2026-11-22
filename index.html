@@ -6,7 +6,7 @@
 <title>Громко и вместе</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tiny5&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   /* layout: one 9:16 phone frame; logo bar, resources, pixel scene, goal strip, tabbed action tiles */
@@ -21,8 +21,8 @@
   --fire:#ff8a3d;       /* enthusiasm */
   --ok:#7be07b;
   --edge:#0a0818;
-  --font:"Golos Text","Trebuchet MS",Verdana,sans-serif;   /* текст: обычный гротеск */
-  --px:"Tiny5","Courier New",monospace;                     /* названия и цифры: пиксель */
+  --font:"Onest","Trebuchet MS",Verdana,sans-serif;        /* текст */
+  --px:"Dela Gothic One","Arial Black",Impact,sans-serif;   /* названия и цифры: афишный гротеск */
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -159,11 +159,11 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
 #disc .age{color:var(--dim);text-align:right}
 .q0{color:#9790b6}.q1{color:var(--ink)}.q2{color:var(--crowd)}.q3{color:var(--fire)}.q4{color:var(--coin)}
 .sub{font-weight:700;color:var(--ink);margin-top:1cqw}
-/* вариант D: пиксельный Tiny5 только в названиях и цифрах (у него одно начертание, жирный не синтезируем) */
+/* Dela Gothic One в названиях и цифрах (одно начертание, жирный не синтезируем), Onest в тексте */
 .act b,.res .num,.tabs button,.h2,.move,.chip,.plate,.badges span,.card b,.big,.stat b,.stat em,u,.fl,.glist b,.modal .row button,.modal .col button,.sub,.toast b,.goal .t b,.prog span,#mk input{font-family:var(--px);font-weight:400!important}
-.act b{font-size:5.4cqw}.res .num{font-size:6.6cqw}.tabs button{font-size:5.2cqw;padding:1.3cqw 0}.h2{font-size:8cqw}.move{font-size:4.8cqw}.chip{font-size:4.7cqw}.plate{font-size:4.7cqw}
-.badges span{font-size:4.4cqw}.card b{font-size:5.4cqw}.big{font-size:5.6cqw}.big small{font-family:var(--font);font-size:3.6cqw;font-weight:500}
-.stat b{font-size:5.4cqw}.stat em{font-size:5cqw}.act span,.stat u{font-size:4.5cqw}.fl{font-size:6.5cqw}.glist b{font-size:5cqw}
+.act b{font-size:4.10cqw}.res .num{font-size:5.02cqw}.tabs button{font-size:3.95cqw;padding:1.3cqw 0}.h2{font-size:6.08cqw}.move{font-size:3.65cqw}.chip{font-size:3.57cqw}.plate{font-size:3.57cqw}
+.badges span{font-size:3.34cqw}.card b{font-size:4.10cqw}.big{font-size:4.26cqw}.big small{font-family:var(--font);font-size:3.6cqw;font-weight:500}
+.stat b{font-size:4.10cqw}.stat em{font-size:3.80cqw}.act span,.stat u{font-size:3.42cqw}.fl{font-size:4.94cqw}.glist b{font-size:3.80cqw}
 .modal .row button,.modal .col button{font-size:5.2cqw}.sub{font-size:5.4cqw}.toast b{font-size:5.4cqw}.goal .t b{font-size:5.2cqw}.prog span{font-size:4.6cqw}#mk input{font-size:5.4cqw}
 .pill{font-size:3.5cqw;font-weight:600}.res .lbl{font-size:3.3cqw}.act i{font-size:3.3cqw}.log{font-size:3.9cqw}.card small,.card em,.card i,.stat i{font-size:3.5cqw}
 @media (prefers-reduced-motion:reduce){.fl{animation-duration:.01s}#mail{animation:none}}
