@@ -6,7 +6,7 @@
 <title>Громко и вместе</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tiny5&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   /* layout: one 9:16 phone frame; logo bar, resources, pixel scene, goal strip, tabbed action tiles */
@@ -21,16 +21,17 @@
   --fire:#ff8a3d;       /* enthusiasm */
   --ok:#7be07b;
   --edge:#0a0818;
-  --font:"Tiny5","Courier New",monospace;
+  --font:"Golos Text","Trebuchet MS",Verdana,sans-serif;   /* текст: обычный гротеск */
+  --px:"Tiny5","Courier New",monospace;                     /* названия и цифры: пиксель */
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-.frame,.frame *{font-weight:400!important}   /* у Tiny5 одно начертание: синтетический жирный его размывает */
+
 html,body{height:100%}
 body{background:var(--night);color:var(--ink);font-family:var(--font);display:flex;align-items:center;justify-content:center;overflow:hidden;
   background-image:linear-gradient(45deg,#1b1637 25%,transparent 25%,transparent 75%,#1b1637 75%),linear-gradient(45deg,#1b1637 25%,transparent 25%,transparent 75%,#1b1637 75%);background-size:16px 16px;background-position:0 0,8px 8px}
 .frame{height:100%;aspect-ratio:9/16;max-width:100%;max-height:calc(100vw*16/9);container-type:size;position:relative;background:var(--night);box-shadow:0 0 0 4px var(--edge)}
-.game{position:absolute;inset:0;display:flex;flex-direction:column;font-size:5.2cqw;line-height:1.05}
+.game{position:absolute;inset:0;display:flex;flex-direction:column;font-size:4.1cqw;line-height:1.15;font-weight:500}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button:focus-visible{outline:.6cqw solid var(--coin);outline-offset:-.6cqw}
 [hidden]{display:none!important}
@@ -104,7 +105,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
 .act.run{background:var(--coin)}.act.run b,.act.run i,.act.run u{color:var(--edge)}
 .empty{grid-column:1/-1;color:var(--dim);font-size:.9em}
 
-.over{position:absolute;inset:0;background:var(--night);display:flex;flex-direction:column;padding:4cqw;gap:2.6cqw;font-size:5.2cqw;overflow-y:auto;z-index:5;scrollbar-width:none}
+.over{position:absolute;inset:0;background:var(--night);display:flex;flex-direction:column;padding:4cqw;gap:2.6cqw;font-size:4.1cqw;font-weight:500;overflow-y:auto;z-index:5;scrollbar-width:none}
 .over p{color:var(--dim);line-height:1.25}
 .over .logo{width:76cqw;height:auto}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:2.4cqw}
@@ -127,7 +128,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
 .big.alt{background:var(--ink);box-shadow:0 1cqw 0 var(--hot)}
 .big small{display:block;font-weight:500;font-size:.8em;margin-top:.6cqw}
 .h2{font-weight:700;font-size:1.7em;color:var(--coin);line-height:1.1;text-wrap:balance}
-.modal{position:absolute;inset:0;background:rgba(10,8,24,.8);z-index:6;display:flex;align-items:center;justify-content:center;padding:6cqw;font-size:5.2cqw}
+.modal{position:absolute;inset:0;background:rgba(10,8,24,.8);z-index:6;display:flex;align-items:center;justify-content:center;padding:6cqw;font-size:4.1cqw;font-weight:500}
 .modal>div{background:var(--panel);padding:4cqw;display:flex;flex-direction:column;gap:2.4cqw;box-shadow:0 0 0 1cqw var(--edge),0 2cqw 0 1cqw var(--hot);width:100%}
 .modal p{line-height:1.25}
 .modal .c{color:var(--coin);font-weight:600;font-size:.9em}
@@ -158,6 +159,13 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
 #disc .age{color:var(--dim);text-align:right}
 .q0{color:#9790b6}.q1{color:var(--ink)}.q2{color:var(--crowd)}.q3{color:var(--fire)}.q4{color:var(--coin)}
 .sub{font-weight:700;color:var(--ink);margin-top:1cqw}
+/* вариант D: пиксельный Tiny5 только в названиях и цифрах (у него одно начертание, жирный не синтезируем) */
+.act b,.res .num,.tabs button,.h2,.move,.chip,.plate,.badges span,.card b,.big,.stat b,.stat em,u,.fl,.glist b,.modal .row button,.modal .col button,.sub,.toast b,.goal .t b,.prog span,#mk input{font-family:var(--px);font-weight:400!important}
+.act b{font-size:5.4cqw}.res .num{font-size:6.6cqw}.tabs button{font-size:5.2cqw;padding:1.3cqw 0}.h2{font-size:8cqw}.move{font-size:4.8cqw}.chip{font-size:4.7cqw}.plate{font-size:4.7cqw}
+.badges span{font-size:4.4cqw}.card b{font-size:5.4cqw}.big{font-size:5.6cqw}.big small{font-family:var(--font);font-size:3.6cqw;font-weight:500}
+.stat b{font-size:5.4cqw}.stat em{font-size:5cqw}.act span,.stat u{font-size:4.5cqw}.fl{font-size:6.5cqw}.glist b{font-size:5cqw}
+.modal .row button,.modal .col button{font-size:5.2cqw}.sub{font-size:5.4cqw}.toast b{font-size:5.4cqw}.goal .t b{font-size:5.2cqw}.prog span{font-size:4.6cqw}#mk input{font-size:5.4cqw}
+.pill{font-size:3.5cqw;font-weight:600}.res .lbl{font-size:3.3cqw}.act i{font-size:3.3cqw}.log{font-size:3.9cqw}.card small,.card em,.card i,.stat i{font-size:3.5cqw}
 @media (prefers-reduced-motion:reduce){.fl{animation-duration:.01s}#mail{animation:none}}
 </style>
 </head>
@@ -1094,7 +1102,7 @@ const SC = (() => {
   const keepSeen = seen => Object.fromEntries(Object.entries(seen).filter(([k]) => !/^(g\d|mv)/.test(k)));
   function save() { try { G.S.last = Date.now(); localStorage.setItem(SAVE, JSON.stringify(G.S)); } catch (e) {} }
   // название плитки всегда в одну строку: если не влезает, уменьшаем кегль
-  function fit(el) { el.style.fontSize = ''; let k = 1; while (el.scrollWidth > el.clientWidth + 1 && k > 0.6) { k -= 0.06; el.style.fontSize = k + 'em'; } }
+  function fit(el) { el.style.fontSize = ''; const base = parseFloat(getComputedStyle(el).fontSize); let k = 1; while (el.scrollWidth > el.clientWidth + 1 && k > 0.6) { k -= 0.06; el.style.fontSize = (base * k) + 'px'; } }
 
   /* ---------- события ядра ---------- */
   G.on((type, d) => {
