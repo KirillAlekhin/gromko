@@ -170,6 +170,15 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
 .stat b{font-size:4.10cqw}.stat em{font-size:3.80cqw}.act span,.stat u{font-size:3.42cqw}.fl{font-size:4.94cqw}.glist b{font-size:3.80cqw}
 .modal .row button,.modal .col button{font-size:3.95cqw}.sub{font-size:4.1cqw}.toast b{font-size:4.1cqw}.goal .t b{font-size:3.95cqw}.prog span{font-size:3.5cqw}#mk input{font-size:4.1cqw}
 .pill{font-size:3.5cqw;font-weight:600}.res .lbl{font-size:3.3cqw}.act i{font-size:3.3cqw}.log{font-size:3.9cqw}.card small,.card em,.card i,.stat i{font-size:3.5cqw}
+/* обучение: подсвеченные элементы с номерами и легенда */
+#tour{position:absolute;inset:0;z-index:7;background:rgba(10,8,24,.62);font-size:4.1cqw;font-weight:500}
+#tour .hl{position:absolute;outline:.8cqw solid var(--coin);background:rgba(255,210,63,.16);pointer-events:none}
+#tour .hl b,#tour li b{font-family:var(--px);font-weight:400!important;background:var(--coin);color:var(--edge);width:6cqw;height:6cqw;display:flex;align-items:center;justify-content:center;font-size:3.8cqw;flex:none}
+#tour .hl b{position:absolute;left:-2cqw;top:-3.4cqw;box-shadow:0 0 0 .6cqw var(--edge)}
+#tour .leg{position:absolute;left:4cqw;right:4cqw;background:var(--panel);padding:3.4cqw;display:flex;flex-direction:column;gap:2.4cqw;box-shadow:0 0 0 1cqw var(--edge),0 2cqw 0 1cqw var(--hot)}
+#tour ol{list-style:none;display:flex;flex-direction:column;gap:2cqw}
+#tour li{display:flex;gap:2.4cqw;align-items:flex-start;line-height:1.25}
+#tour .leg button{align-self:flex-start;padding:2.2cqw 5cqw;background:var(--hot);color:var(--edge);box-shadow:0 .8cqw 0 #8a1c33;font-family:var(--px);font-size:3.95cqw}
 @media (prefers-reduced-motion:reduce){.fl{animation-duration:.01s}#mail{animation:none}}
 </style>
 </head>
@@ -222,6 +231,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
     <div class="row"><button id="hintGo">Делаем</button><button class="sec" id="hintNo">Позже</button></div>
   </div></div>
 
+  <div id="tour" hidden><div id="tourHl"></div><div class="leg" id="tourLeg"><ol id="tourList"></ol><button id="tourGo"></button></div></div>
   <div class="modal" id="goalM" hidden><div>
     <div class="h2" id="goalH"></div><p id="goalS"></p>
     <ul class="glist" id="goalL"></ul>
@@ -232,11 +242,12 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
     <div class="h2">Меню</div>
     <div class="col">
       <button id="mGoal">Цели площадки</button>
+      <button id="mTour">Как играть</button>
       <button id="mArtist">Артист и прокачка</button>
       <button id="mReset">Сменить группу</button>
       <button class="hot" id="mClose">Назад в игру</button>
     </div>
-    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 15:15</p>
+    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 15:40</p>
   </div></div>
   <div class="modal" id="mk" hidden><div>
     <div class="h2">Своя группа</div>
@@ -1257,7 +1268,7 @@ const SC = (() => {
   const set = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const html = (el, v) => { if (el.innerHTML !== v) el.innerHTML = v; };
   const say = (msg, cls) => { const el = $('#log'); el.textContent = msg; el.className = 'log ' + (cls || ''); };
-  const paused = () => !$('#hint').hidden || !$('#win').hidden || !$('#goalM').hidden || !$('#menu').hidden;
+  const paused = () => !$('#hint').hidden || !$('#win').hidden || !$('#goalM').hidden || !$('#menu').hidden || !$('#tour').hidden;
   function float(txt, kind) {
     const d = document.createElement('div'); d.className = 'fl ' + kind; d.textContent = txt; d.style.left = (28 + Math.random() * 44) + '%';
     $('#scene').appendChild(d); setTimeout(() => d.remove(), 1500);
@@ -1304,7 +1315,22 @@ const SC = (() => {
     $('#goalTip').textContent = TIPS[s.lvl] + (s.lvl > 0 ? ' Меньше ' + fmt(LV[s.lvl - 1].goalL * CFG.ROLLBACK_AT) + ' слушателей — откат назад.' : '');
     $('#goalM').hidden = false;
   }
-  $('#goalOk').addEventListener('click', () => { $('#goalM').hidden = true; });
+  $('#goalOk').addEventListener('click', () => { $('#goalM').hidden = true; if (!G.S.seen.tour) showTour(0); });
+
+  /* ---------- обучение: два экрана, показываются один раз при первой игре ---------- */
+  const TOUR = [
+    { at: 'bottom', next: 'Дальше', items: [['#who', 'Прокачай вокал и харизму. Это поможет!'], ['#menuB', 'Цели уровня, смена состава и другие моменты.'], ['.res', 'Песни приносят рубли. Слушатели уходят сами. Энтузиазм копится, пока отдыхаешь.']] },
+    { at: 'top', next: 'Играть', items: [['#goalBox', 'Цели уровня.'], ['#tabs', 'Пиши, продвигай, зарабатывай!'], ['#list', 'Первое нажатие покажет подсказку.']] }
+  ];
+  let tourStep = 0;
+  function showTour(n) {
+    tourStep = n; const T = TOUR[n], fr = $('.frame').getBoundingClientRect(), base = n === 0 ? 0 : TOUR[0].items.length;
+    $('#tourHl').innerHTML = T.items.map(([sel], i) => { const r = $(sel).getBoundingClientRect(); return '<div class="hl" style="left:' + (r.left - fr.left) + 'px;top:' + (r.top - fr.top) + 'px;width:' + r.width + 'px;height:' + r.height + 'px"><b>' + (base + i + 1) + '</b></div>'; }).join('');
+    $('#tourList').innerHTML = T.items.map(([, text], i) => '<li><b>' + (base + i + 1) + '</b><span>' + text + '</span></li>').join('');
+    $('#tourGo').textContent = T.next; const leg = $('#tourLeg'); leg.style.top = T.at === 'top' ? '14cqw' : ''; leg.style.bottom = T.at === 'bottom' ? '8cqw' : '';
+    G.S.seen.tour = 1; $('#tour').hidden = false;
+  }
+  $('#tourGo').addEventListener('click', () => { AU.sfx('tap'); if (tourStep + 1 < TOUR.length) showTour(tourStep + 1); else $('#tour').hidden = true; });
   $('#goalBox').addEventListener('click', e => { if (!e.target.closest('#move')) { AU.init(); showGoal(false); } });
 
   /* ---------- отрисовка HUD ---------- */
@@ -1394,6 +1420,7 @@ const SC = (() => {
   $('#menuB').addEventListener('click', () => { AU.init(); AU.sfx('tap'); const bi = $('#buildInfo'); bi.textContent = bi.textContent.split(' · ')[0] + ' · звук: ' + AU.state(); $('#mReset').textContent = 'Сменить группу'; resetArm = 0; $('#menu').hidden = false; });
   $('#mClose').addEventListener('click', () => { $('#menu').hidden = true; });
   $('#mGoal').addEventListener('click', () => { $('#menu').hidden = true; showGoal(false); });
+  $('#mTour').addEventListener('click', () => { $('#menu').hidden = true; showTour(0); });
   $('#mArtist').addEventListener('click', () => { $('#menu').hidden = true; renderArtist(); $('#artist').hidden = false; });
   $('#mReset').addEventListener('click', () => {
     if (Date.now() - resetArm < 4000) { const done = G.S.done, seen = keepSeen(G.S.seen), snd = G.S.sound; G.S = fresh(); G.S.done = done; G.S.seen = seen; G.S.sound = snd; save(); listKey = ''; $('#menu').hidden = true; $('#artist').hidden = true; AU.setMusic('', 0); showStart(); }
@@ -1425,7 +1452,7 @@ const SC = (() => {
     const c = $('#cards'); c.innerHTML = '';
     ACTS.forEach((a, i) => {
       const b = document.createElement('button'); b.className = 'card';
-      b.innerHTML = '<canvas width="110" height="78"></canvas><b>' + a.n + (G.S.done.includes(i) ? ' ★' : '') + '</b><small>' + a.slogan + '</small><em>' + a.genre + '</em><i>' + PERKS[a.pk] + '</i>';
+      b.innerHTML = '<canvas width="110" height="78"></canvas><b>' + a.n + (G.S.done.includes(i) ? ' ★' : '') + '</b><small>' + a.slogan + '</small><em>' + a.genre + '</em><i>' + PERKS[a.pk].toLowerCase() + '</i>';   // на карточках перки строчными
       b.addEventListener('click', () => pick(i));
       // наведение или фокус: звучит жанр этого артиста, ушли — снова тема меню
       const on = () => AU.setMusic(musicOf(a, 0, 0), 4), off = () => { if (!$('#start').hidden && $('#mk').hidden) AU.setMusic('меню', 2); };
@@ -1434,7 +1461,7 @@ const SC = (() => {
       SC.lineup(b.querySelector('canvas').getContext('2d'), a, 0, 55, 76, 32);
     });
     const b = document.createElement('button'); b.className = 'card mk';
-    b.innerHTML = '<span class="dicebox"><span class="dice"><s></s><s></s><s></s><s></s><s></s></span></span><b>Своя группа</b><small>Всё решает кубик.</small><em>случайный жанр</em><i>Случайный перк</i>';
+    b.innerHTML = '<span class="dicebox"><span class="dice"><s></s><s></s><s></s><s></s><s></s></span></span><b>Своя группа</b><small>Всё решает кубик.</small><em>случайный жанр</em><i>случайный перк</i>';
     b.addEventListener('click', () => { AU.init(); rollMk(); $('#mk').hidden = false; });
     c.appendChild(b);
     $('#start').hidden = false;
