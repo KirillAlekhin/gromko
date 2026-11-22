@@ -263,14 +263,6 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
   </div>
 </div>
 <script>
-/* Настройки публикации. */
-"use strict";
-// Адрес бота-воркера без косой черты на конце, например 'https://gromko-bot.имя.workers.dev'.
-// Пусто — хит бесплатный раз в 10 минут. Заполнено — внутри Telegram хит продаётся за одну звезду.
-const PAY_URL = '';
-
-</script>
-<script>
 /* Словари для названий песен. У каждого артиста свой принцип. */
 "use strict";
 const W_ = {
@@ -341,7 +333,7 @@ const CFG = {
   EVENT_GAP: [150, 300],
   OFFLINE_RATE: 0.018,// доля цены перехода за час отсутствия (≈ 2 недели на всю игру)
   OFFLINE_MAX_H: 24,
-  STAR_CD: 600,
+  STAR_CD: 300,       // сек: базовый таймер гарантированного хита; после каждого хита +60
   WORLD: 8e9
 };
 const LV = [
@@ -369,17 +361,17 @@ const ACTS = [
     home: 'Комната в панельке', ppl: 1, maxM: 2, roles: ['Барабанщик', 'Гитарист'], th: TH },
   { id: 'vrubel', n: 'VRUBEL', slogan: 'Новый альбом — новый жанр.', genre: 'меняется', pk: 'gig',
     home: 'Дача', ppl: 2, maxM: 3, roles: ROLES, th: [0.07, 0.17, 0.28, 0.46] },
-  { id: 'rynok', n: 'РЫНОК', slogan: 'Сыграем по-братски, брат!', genre: 'блюз', pk: 'keep',
+  { id: 'rynok', n: 'РЫНОК', slogan: 'Сыграем по-братски, брат!', genre: 'хип-хоп, латино', pk: 'keep',
     home: 'Гараж', ppl: 2, maxM: 3, roles: ROLES, th: TH },
   // трио: группу не усилить; скрытая особенность — хит бывает один раз, зато крепких песен и бэнгеров больше
-  { id: 'solnechny', n: 'solnechny', slogan: 'Музыка сердца.', genre: 'рок', pk: 'fast',
+  { id: 'solnechny', n: 'solnechny', slogan: 'Музыка сердца.', genre: 'рок-баллады', pk: 'fast',
     home: 'Репбаза', ppl: 3, maxM: 0, noUp: true, oneHit: true, roles: [], th: [0.03, 0.30, 0.62, 0.85] }
 ];
 const CUSTOM = ACTS.length;   // индекс «своей группы»
 const HOMES = { blond: 'Домик в лесу', solt: 'Комната в панельке', vrubel: 'Дача', rynok: 'Гараж', solnechny: 'Репбаза' };
 const POOL_SIZE = 8;          // сколько внешностей в атласе для своей группы (cust_0..7)
-const VR_GENRES = ['инди-рок', 'синти-поп', 'панк', 'диско'];
-const ALL_GENRES = ['фолк', 'рок', 'блюз', 'инди-рок', 'синти-поп', 'панк', 'диско'];
+const VR_GENRES = ['инди-рок', 'гранж', 'панк-рок', 'джаз'];   // жанр VRUBEL меняется с каждым альбомом по кругу
+const ALL_GENRES = ['фолк', 'рок', 'блюз', 'инди-рок', 'синти-поп', 'панк-рок', 'диско', 'джаз', 'гранж'];
 const NAME_A = ['Тихий', 'Громкий', 'Северный', 'Ржавый', 'Синий', 'Пьяный', 'Вечный', 'Ночной', 'Летний', 'Чужой', 'Последний', 'Пустой'];
 const NAME_N = ['трамвай', 'подъезд', 'балкон', 'район', 'вокзал', 'космос', 'двор', 'магнитофон', 'этаж', 'сентябрь', 'автобус', 'рассвет'];
 const WORDS = typeof module !== 'undefined' ? require('./words.js') : W_;   // словари названий песен: src/words.js
@@ -392,7 +384,7 @@ const STATS = {
 };
 const STAT_MAX = 10;
 
-const G = { S: null, listeners: [], rnd: Math.random, pay: false };   // pay: хит продаётся за звезду (включает интерфейс внутри Telegram)
+const G = { S: null, listeners: [], rnd: Math.random };
 const SAFE = {};
 G.on = f => G.listeners.push(f);
 const emit = (type, data) => G.listeners.forEach(f => f(type, data || {}));
@@ -435,6 +427,9 @@ const statDur = k => Math.round(45 * Math.pow(1.35, G.S.stats[k]));
 const placeName = () => { const s = G.S; return s.lvl === 0 ? act().home : s.lvl === 1 ? STREETS[Math.max(0, s.street)] : s.lvl === 2 ? CLUBS[Math.max(0, s.club)] : lv().n; };
 const genre = () => act().id === 'vrubel' ? VR_GENRES[G.S.albums % 4] : act().genre;
 const perkText = () => PERKS[act().pk];
+// какая музыка звучит: у четырёх групп по три версии, на каждой площадке они сменяют друг друга случайно; у VRUBEL жанр на альбом
+const MUSIC = { blond: 'фолк-', solt: 'рок-', rynok: 'рынок-', solnechny: 'солн-' };
+const musicOf = (a, lvl, albums) => MUSIC[a.id] ? [1, 2, 3].map(v => MUSIC[a.id] + v) : a.id === 'vrubel' ? VR_GENRES[albums % 4] : a.genre;
 
 function gainL(n, note) { n = Math.max(0, n); G.S.L = Math.min(CFG.WORLD, G.S.L + n); if (n >= 1) emit('float', { txt: '+' + fmt(n), kind: 'L' }); return n; }
 function gainM(n) { G.S.money += n; emit('float', { txt: (n < 0 ? '−' : '+') + fmt(Math.abs(n)) + ' ₽', kind: 'M' }); }
@@ -496,10 +491,10 @@ const A = [
       const s = S(); let k = 0; s.songs.forEach(x => { if (!x.alb && k < 8) { x.alb = 1; k++; } });
       if (act().id === 'vrubel') { const l = loseL(0.25); log('Новый жанр: ' + VR_GENRES[(s.albums + 1) % 4] + '. Ушло ' + fmt(l) + ' слушателей', 'bad'); }
       s.albums++; const g = B() * 12; gainL(g); emit('album'); log('Альбом №' + s.albums + ' вышел! +' + fmt(g) + ' слушателей', 'hit'); } },
-  { id: 'star', tab: 0, name: () => 'Хит ★', tag: () => G.pay ? '1 звезда' : S().t < S().starAt ? Math.ceil((S().starAt - S().t) / 60) + ' мин' : 'бесплатно',
-    hint: () => G.pay ? 'Гарантированный хит за одну звезду Telegram.' : 'Гарантированный хит. В Telegram стоит одну звезду, здесь — бесплатно раз в 10 минут.',
-    lock: () => !G.pay && S().t < S().starAt ? 'Следующий хит через ' + Math.ceil((S().starAt - S().t) / 60) + ' мин' : '',
-    cost: () => 0, e: 0, dur: () => 3, done() { if (!G.pay) S().starAt = S().t + CFG.STAR_CD; addSong({ q: 4 }); } },
+  { id: 'star', tab: 0, name: () => 'Хит', tag: () => S().t < S().starAt ? 'через ' + Math.ceil((S().starAt - S().t) / 60) + ' мин' : 'готов',
+    hint: 'Гарантированный хит по таймеру. После каждого хита ждать на минуту дольше.',
+    lock: () => S().t < S().starAt ? 'Хит будет готов через ' + Math.ceil((S().starAt - S().t) / 60) + ' мин' : '',
+    cost: () => 0, e: 0, dur: () => 3, done() { const s = S(); s.hits = (s.hits || 0) + 1; s.starAt = s.t + CFG.STAR_CD + 60 * s.hits; addSong({ q: 4 }); } },
 
   { id: 'photo', tab: 1, name: () => 'Фотосессия', hint: 'Следующий рилс или SMM сработает вдвое сильнее.',
     lock: () => S().photo ? 'Свежие фото уже есть' : '', cost: () => 400 * M(), e: 10, dur: () => 5, done() { S().photo = true; log('Фото готовы: следующий рилс или SMM x2', 'good'); } },
@@ -639,28 +634,100 @@ if (typeof module !== 'undefined') module.exports = { WORDS, CUSTOM, rollCustom,
 
 </script>
 <script>
-/* Восьмибитный звук. Фоновая музыка: у каждого жанра свой рифф, гармония, ритм-секция и две написанные темы.
+/* Восьмибитный звук. Палитра одна на всю игру, как у старой приставки: пульс 12,5%, 25% и 50% (square), треугольник и шум.
+   Пилы и синуса нет нигде — так вся музыка звучит в одной стилистике. Фоновая музыка: у каждого жанра свой рифф, гармония, ритм-секция и две написанные темы.
    Площадка меняет тональность, тему и плотность аранжировки. Плюс 15 джинглов песен и эффекты. */
 "use strict";
 const AU = (() => {
   let ctx = null, master, music, nbuf, P25, P12, timer = null, spec = null, step = 0, nextT = 0, on = true, key = '';
-  const M3 = [0, 4, 7], m3 = [0, 3, 7], D7 = [0, 4, 7, 10], m7 = [0, 3, 7, 10], _ = null;
+  let list = [], cur = '', loops = 0;   // плейлист площадки: версии сменяют друг друга случайно, каждая звучит два квадрата
+  const M3 = [0, 4, 7], m3 = [0, 3, 7], D7 = [0, 4, 7, 10], m7 = [0, 3, 7, 10], J7 = [0, 4, 7, 11], _ = null;
+  const all16 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], ev16 = [0, 2, 4, 6, 8, 10, 12, 14];
   /* prog: [корень, тоны аккорда]; все паттерны по 8 шагов (восьмые) на такт, значения в полутонах от корня аккорда.
      rh: ритм-гитара (рифф), arp: перебор по тонам аккорда (индексы), bass, stab: аккорд на слабую долю,
      A/B: темы [шаг, полутон от тоники, длительность, 'b' = подтяжка] на весь квадрат */
   const GENRES = {
+    // Кандидаты для Блонда: акустика. spb — шагов в такте (16 = шестнадцатые), pick — перебор по «струнам» 0..5
+    // (0 бас-корень, 1 квинта, 2 октава, 3 терция, 4 квинта, 5 верхняя октава), strum — бой: 'd' вниз, 'u' вверх.
+    // gate — с какой площадки вступает партия: дома одна гитара, дальше добавляются голос, контрабас, шейкер, притоп, хлопок, бубен.
+    'фолк-1': { bpm: 96, spb: 16, swing: 0, prog: [[0, m3], [8, M3], [3, M3], [10, M3], [0, m3], [8, M3], [3, M3], [10, M3]],
+      pick: [0, 3, 4, 3, 5, 3, 4, 3, 1, 3, 4, 3, 5, 4, 3, 4], bass: [0, _, _, _, _, _, _, _, 7, _, _, _, _, _, _, _], bassW: 'triangle', lead: 'triangle', leadOct: 0,
+      kick: [0, 8], snare: [4, 12], hat: [0, 2, 4, 6, 8, 10, 12, 14], shaker: [2, 6, 10, 14], gate: { lead: 1, bass: 2, shaker: 2, kick: 3, snare: 4, hat: 5 },
+      A: [[0, 19, 8], [8, 15, 8], [16, 15, 6], [22, 12, 2], [24, 15, 8], [32, 19, 8], [40, 22, 8], [48, 17, 12], [60, 14, 4], [64, 12, 4], [68, 15, 4], [72, 19, 8], [80, 20, 8], [88, 19, 4], [92, 15, 4], [96, 19, 6], [102, 15, 2], [104, 15, 8], [112, 14, 8], [120, 17, 4], [124, 14, 4]] },
+    'фолк-2': { bpm: 108, spb: 8, swing: 0.1, prog: [[0, M3], [7, M3], [9, m3], [5, M3], [0, M3], [7, M3], [9, m3], [5, M3]],
+      strum: ['d', _, 'd', 'u', _, 'u', 'd', 'u'], bass: [0, _, _, _, 7, _, _, _], bassW: 'triangle', lead: 'triangle', leadOct: 0,
+      kick: [0, 4], snare: [2, 6], hat: [0, 1, 2, 3, 4, 5, 6, 7], shaker: [1, 3, 5, 7], gate: { lead: 1, bass: 2, shaker: 2, kick: 3, snare: 4, hat: 5 },
+      A: [[0, 16, 2], [2, 19, 2], [4, 21, 1], [5, 19, 3], [8, 23, 2], [10, 19, 2], [12, 14, 4], [16, 16, 2], [18, 21, 2], [20, 24, 3], [23, 21, 1], [24, 21, 2], [26, 17, 2], [28, 17, 4],
+        [32, 12, 2], [34, 16, 2], [36, 19, 4], [40, 19, 2], [42, 23, 2], [44, 26, 4], [48, 24, 2], [50, 21, 2], [52, 16, 4], [56, 17, 2], [58, 14, 2], [60, 12, 4]] },
+    'фолк-3': { bpm: 92, spb: 16, swing: 0, prog: [[0, m3], [8, M3], [3, M3], [10, M3], [5, m3], [0, m3], [7, M3], [0, m3]],
+      pick: [0, 2, 3, 4, 5, 4, 3, 2, 1, 2, 3, 4, 5, 4, 3, 4], strum: ['d', _, _, _, 'd', _, 'u', _, _, _, 'u', _, 'd', _, 'u', _], mode: bar => bar < 4 ? 'pick' : 'strum',
+      bass: [0, _, _, _, _, _, _, _, 7, _, _, _, 0, _, _, _], bassW: 'triangle', lead: 'triangle', leadOct: 0,
+      kick: [0, 8], snare: [4, 12], hat: [0, 2, 4, 6, 8, 10, 12, 14], shaker: [2, 6, 10, 14], gate: { lead: 1, bass: 2, shaker: 2, kick: 3, snare: 4, hat: 5 },
+      A: [[0, 12, 8], [8, 15, 4], [12, 19, 4], [16, 20, 8], [24, 15, 8], [32, 19, 8], [40, 15, 4], [44, 19, 4], [48, 22, 12], [60, 19, 4], [64, 17, 6], [70, 20, 2], [72, 24, 8], [80, 24, 4], [84, 19, 4], [88, 15, 8], [96, 23, 4], [100, 19, 4], [104, 14, 8], [112, 12, 16]] },
     // экран выбора артиста: приветливая мажорная тема
     'меню': { bpm: 104, swing: 0.06, prog: [[0, M3], [7, M3], [9, m3], [5, M3]],
       arp: [0, 1, 2, 3, 2, 1, 2, 1], arpW: 'p25', bass: [0, _, 7, _, 0, _, 7, _], bassW: 'triangle', lead: 'triangle', leadOct: 0, kick: [0, 4], snare: [], hat: [2, 6],
       A: [[0, 16, 2], [2, 19, 2], [4, 24, 4], [8, 23, 2], [10, 19, 2], [12, 14, 4], [16, 12, 2], [18, 16, 2], [20, 21, 4], [24, 17, 2], [26, 21, 2], [28, 24, 2], [30, 19, 2]],
       B: [[0, 16, 2], [2, 19, 2], [4, 24, 4], [8, 23, 2], [10, 19, 2], [12, 14, 4], [16, 12, 2], [18, 16, 2], [20, 21, 4], [24, 17, 2], [26, 21, 2], [28, 24, 2], [30, 19, 2]] },
+    // Кандидаты для РЫНКА: гитарный перебор поверх хип-хоп и латино-ритмов, тему ведёт труба
+    'рынок-1': { bpm: 84, spb: 16, swing: 0, prog: [[0, m3], [0, m3], [8, M3], [7, M3], [0, m3], [0, m3], [8, M3], [7, M3]],   // кальян-рэп
+      pick: [0, _, 3, _, 4, _, 3, 5, _, 3, _, 4, 3, _, 4, _], bass: [0, _, _, _, _, _, 0, _, _, _, 0, _, _, _, _, _], bassW: 'triangle', lead: 'triangle', leadOct: 0,
+      kick: [0, 6, 10], snare: [8], hat: all16, gate: { lead: 1, bass: 2, kick: 2, snare: 3, hat: 3 },
+      A: [[0, 19, 6], [6, 20, 2], [8, 19, 4], [12, 17, 4], [16, 15, 6], [22, 17, 2], [24, 19, 8], [32, 20, 6], [38, 19, 2], [40, 17, 4], [44, 15, 4], [48, 23, 4, 'b'], [52, 20, 4], [56, 19, 8],
+        [64, 24, 6], [70, 23, 2], [72, 24, 4], [76, 19, 4], [80, 20, 4], [84, 19, 4], [88, 15, 8], [96, 17, 4], [100, 20, 4], [104, 24, 6], [110, 23, 2], [112, 23, 6, 'b'], [118, 20, 2], [120, 19, 8]] },
+    'рынок-2': { bpm: 96, spb: 16, swing: 0, prog: [[0, m3], [10, M3], [8, M3], [7, M3], [0, m3], [10, M3], [8, M3], [7, M3]],   // латино
+      pick: [0, _, 3, 4, _, 3, 5, _, 1, _, 3, 4, _, 3, 5, 3], bass: [0, _, _, 7, _, _, 12, _, 0, _, _, 7, _, _, 10, _], bassW: 'triangle', lead: 'square', leadOct: 0,
+      kick: [0, 4, 8, 12], snare: [3, 6, 11, 14], hat: [2, 6, 10, 14], shaker: ev16, gate: { lead: 1, bass: 2, shaker: 1, kick: 2, snare: 3, hat: 4 },
+      A: [[0, 12, 2], [2, 15, 2], [4, 19, 4], [10, 19, 2], [12, 17, 2], [14, 15, 2], [16, 14, 4], [20, 17, 4], [24, 22, 8], [32, 20, 2], [34, 24, 2], [36, 20, 4], [42, 17, 2], [44, 15, 4], [48, 19, 4], [52, 23, 4], [56, 26, 8],
+        [64, 24, 3], [67, 24, 3], [70, 19, 2], [72, 15, 8], [80, 22, 3], [83, 22, 3], [86, 17, 2], [88, 14, 8], [96, 20, 2], [98, 17, 2], [100, 15, 2], [102, 12, 2], [104, 17, 8], [112, 19, 2], [114, 20, 2], [116, 23, 4], [120, 19, 8]] },
+    'рынок-3': { bpm: 88, spb: 16, swing: 0.18, prog: [[0, m7], [5, m7], [0, m7], [7, D7], [0, m7], [5, m7], [0, m7], [7, D7]],   // хип-хоп под гитару
+      strum: ['d', _, _, _, _, _, 'u', _, _, _, 'd', _, _, 'u', _, _], bass: [0, _, _, 0, _, _, _, _, _, _, 7, _, 0, _, _, _], bassW: 'triangle', lead: 'square', leadOct: 0,
+      kick: [0, 7, 10], snare: [4, 12], hat: ev16, gate: { lead: 1, bass: 2, kick: 2, snare: 3, hat: 3 },
+      A: [[4, 19, 4], [8, 15, 2], [10, 12, 6], [20, 17, 4], [24, 20, 2], [26, 17, 6], [36, 19, 2], [38, 22, 2], [40, 24, 8], [52, 23, 4, 'b'], [56, 19, 8], [68, 12, 2], [70, 15, 2], [72, 19, 6], [84, 20, 4], [88, 17, 8], [100, 24, 2], [102, 22, 2], [104, 19, 8], [116, 23, 4], [120, 26, 8]] },
+    // VRUBEL: по жанру на альбом. В басу числа от 100 — тоны аккорда (100 корень, 101 терция, 102 квинта, 103 септима): так ходит джазовый бас
+    'джаз': { bpm: 112, spb: 8, swing: 0.3, prog: [[2, m7], [7, D7], [0, J7], [9, D7], [2, m7], [7, D7], [0, J7], [9, D7]],
+      stab: [3, 6], stabW: 'p25', bass: [100, _, 101, _, 102, _, 103, _], bassW: 'triangle', lead: 'p25', leadOct: 0,
+      kick: [], snare: [], hat: [0, 2, 3, 4, 6, 7], shaker: [2, 6], gate: { lead: 1, bass: 0, stab: 1, hat: 2, shaker: 3 },
+      A: [[0, 21, 2], [2, 17, 1], [3, 14, 3], [6, 17, 2], [8, 19, 2], [10, 23, 1], [11, 26, 3], [14, 23, 2], [16, 24, 4], [20, 19, 2], [22, 16, 2], [24, 25, 3, 'b'], [27, 21, 2], [29, 19, 3],
+        [32, 17, 2], [34, 21, 2], [36, 24, 4], [40, 23, 2], [42, 19, 1], [43, 17, 3], [46, 14, 2], [48, 16, 6], [54, 12, 2], [56, 13, 2], [58, 16, 2], [60, 19, 4]] },
+    'гранж': { bpm: 100, spb: 8, swing: 0, prog: [[0, m3], [3, M3], [8, M3], [5, M3], [0, m3], [3, M3], [8, M3], [5, M3]], mode: bar => bar < 4 ? 'clean' : 'drive',
+      arp: [0, _, 2, _, 1, _, 2, _], arpW: 'p12', rh: [[0, _, 0, _, 0, 0, _, 0]], rhW: 'square', pow: true,
+      bass: [0, _, 0, _, 0, 0, _, 0], bassW: 'p25', lead: 'p12', leadOct: 0, kick: [0, 5], snare: [2, 6], hat: [0, 1, 2, 3, 4, 5, 6, 7], gate: { rh: 0, lead: 1, bass: 1, kick: 2, snare: 2, hat: 3 },
+      A: [[0, 12, 8], [8, 15, 6], [14, 14, 2], [16, 20, 8], [24, 17, 8], [32, 24, 4, 'b'], [36, 22, 4], [40, 27, 4], [44, 24, 4], [48, 20, 6], [54, 24, 2], [56, 22, 4, 'b'], [60, 17, 4]] },
+    // Кандидаты для solnechny: рок-баллады на электрогитарах, неторопливые, с долгими подтянутыми нотами в соло
+    'солн-1': { bpm: 80, spb: 8, swing: 0.08, prog: [[0, M3], [5, M3], [7, M3], [0, M3], [9, m3], [5, M3], [7, M3], [0, M3]],   // баллада: бой и «губная гармошка»
+      strum: ['d', _, 'd', 'u', _, 'u', 'd', _], bass: [0, _, _, _, 7, _, _, _], bassW: 'triangle', lead: 'p12', leadOct: 0,
+      kick: [0, 5], snare: [4], hat: [0, 2, 4, 6], shaker: [2, 6], gate: { lead: 1, bass: 2, shaker: 2, kick: 3, snare: 3, hat: 4 },
+      A: [[0, 19, 3], [3, 21, 1], [4, 19, 4], [8, 17, 3], [11, 21, 1], [12, 24, 4], [16, 23, 4], [20, 19, 2], [22, 21, 2], [24, 19, 8], [32, 24, 3], [35, 28, 1], [36, 24, 4], [40, 21, 4], [44, 24, 4], [48, 26, 3], [51, 23, 1], [52, 19, 4], [56, 16, 4], [60, 12, 4]] },
+    'солн-2': { bpm: 92, spb: 8, swing: 0, prog: [[0, m3], [10, M3], [8, M3], [10, M3], [0, m3], [10, M3], [8, M3], [10, M3]],   // тяжёлая медленная: рваные аккорды, соло на одной ноте
+      rh: [[0, _, 0, _, _, 0, 0, _]], rhW: 'square', pow: true, bass: [0, _, 0, _, _, 0, 0, _], bassW: 'p25', lead: 'p12', leadOct: 0,
+      kick: [0, 5], snare: [2, 6], hat: [0, 1, 2, 3, 4, 5, 6, 7], gate: { rh: 0, lead: 1, bass: 2, kick: 3, snare: 3, hat: 4 },
+      A: [[0, 19, 2], [2, 19, 1], [3, 19, 1], [4, 19, 4, 'b'], [8, 22, 6, 'b'], [14, 19, 2], [16, 20, 2], [18, 20, 2], [20, 24, 4, 'b'], [24, 22, 8], [32, 24, 1], [33, 24, 1], [34, 24, 2], [36, 27, 4, 'b'], [40, 26, 4], [44, 22, 4], [48, 24, 6, 'b'], [54, 20, 2], [56, 22, 3], [59, 19, 5]] },
+    'солн-3': { bpm: 84, spb: 8, swing: 0, prog: [[0, m3], [8, M3], [3, M3], [10, M3], [0, m3], [8, M3], [3, M3], [10, M3]], mode: bar => bar < 4 ? 'clean' : 'drive',   // тихо, потом буря
+      arp: [0, _, 1, 2, _, 1, 2, 3], arpW: 'p12', rh: [[0, 0, _, 0, 0, _, 0, _]], rhW: 'square', pow: true,
+      bass: [0, _, _, 0, _, _, 7, _], bassW: 'p25', lead: 'p12', leadOct: 0, kick: [0, 3, 4], snare: [2, 6], hat: [0, 1, 2, 3, 4, 5, 6, 7], gate: { rh: 0, lead: 1, bass: 2, kick: 3, snare: 3, hat: 4 },
+      A: [[0, 12, 6], [6, 15, 2], [8, 20, 8], [16, 19, 6], [22, 15, 2], [24, 17, 8], [32, 24, 8, 'b'], [40, 24, 2], [42, 27, 2], [44, 24, 4], [48, 22, 4, 'b'], [52, 19, 4], [56, 22, 2], [58, 26, 6]] },
+    // Кандидаты для Soltcola: электрогитары. arp — чистый перебор, rh — перегруженный рифф; mode делит квадрат на чистую и тяжёлую части
+    'рок-1': { bpm: 76, spb: 8, swing: 0, prog: [[0, M3], [7, M3], [9, m3], [5, M3], [0, M3], [7, M3], [9, m3], [5, M3]],
+      arp: [0, 1, 2, 3, 2, 1, 2, 1], arpW: 'p12', bass: [0, _, _, _, _, _, 7, _], bassW: 'triangle', lead: 'p12', leadOct: 0,
+      kick: [0, 5], snare: [4], hat: [0, 2, 4, 6], gate: { lead: 1, bass: 2, kick: 3, snare: 3, hat: 4 },
+      A: [[0, 16, 6, 'b'], [6, 19, 2], [8, 23, 4], [12, 19, 4], [16, 21, 6, 'b'], [22, 24, 2], [24, 21, 4], [28, 17, 4], [32, 24, 4, 'b'], [36, 28, 4], [40, 26, 6], [46, 23, 2], [48, 24, 3], [51, 21, 3], [54, 16, 2], [56, 17, 4, 'b'], [60, 14, 4]] },
+    'рок-2': { bpm: 152, spb: 8, swing: 0, prog: [[0, m3], [0, m3], [8, M3], [10, M3], [0, m3], [0, m3], [3, M3], [10, M3]],
+      rh: [[0, 0, 3, 0, 5, 0, 7, 5], [0, 0, 3, 0, 5, 0, 3, 0], [0, 0, 0, 0, 0, 0, 7, 0], [0, 0, 0, 0, 0, 7, 0, 7]], rhW: 'square', pow: true,
+      bass: [0, 0, 0, 0, 0, 0, 0, 0], bassW: 'p25', lead: 'p12', leadOct: 0, kick: [0, 3, 4], snare: [2, 6], hat: [0, 1, 2, 3, 4, 5, 6, 7], gate: { rh: 0, lead: 1, bass: 2, kick: 3, snare: 3, hat: 4 },
+      A: [[0, 12, 2], [2, 15, 2], [4, 19, 3], [7, 17, 1], [8, 15, 4], [12, 12, 4], [16, 20, 4, 'b'], [20, 15, 4], [24, 22, 3, 'b'], [27, 19, 1], [28, 17, 4],
+        [32, 24, 2], [34, 22, 2], [36, 19, 4], [40, 15, 2], [42, 19, 2], [44, 24, 4], [48, 22, 4, 'b'], [52, 19, 4], [56, 17, 2], [58, 14, 2], [60, 10, 4]] },
+    'рок-3': { bpm: 104, spb: 8, swing: 0, prog: [[9, m3], [5, M3], [0, M3], [7, M3], [9, m3], [5, M3], [0, M3], [7, M3]], mode: bar => bar < 4 ? 'clean' : 'drive',
+      arp: [0, 2, 1, 2, 3, 2, 1, 2], arpW: 'p12', rh: [[0, _, 0, 0, _, 0, 0, _]], rhW: 'square', pow: true,
+      bass: [0, _, 0, _, 0, _, 7, _], bassW: 'p25', lead: 'p12', leadOct: 0, kick: [0, 3, 4], snare: [2, 6], hat: [0, 1, 2, 3, 4, 5, 6, 7], gate: { rh: 0, lead: 1, bass: 2, kick: 3, snare: 3, hat: 4 },
+      A: [[0, 16, 6], [6, 14, 2], [8, 12, 6], [14, 9, 2], [16, 12, 4], [20, 16, 4], [24, 14, 8], [32, 21, 4, 'b'], [36, 24, 4], [40, 26, 3], [43, 24, 1], [44, 21, 4], [48, 28, 6, 'b'], [54, 24, 2], [56, 23, 4], [60, 19, 4]] },
     'фолк': { bpm: 84, swing: 0.08, prog: [[0, m3], [10, M3], [5, M3], [0, m3], [3, M3], [10, M3], [5, M3], [7, m3]],
       arp: [_, 2, 1, 2, _, 1, 2, 3], arpW: 'p25', bass: [0, _, _, _, 7, _, _, _], bassW: 'triangle', lead: 'triangle', leadOct: 0,
       kick: [], snare: [], hat: [], shaker: [2, 6],
       A: [[0, 12, 3], [4, 10, 2], [6, 7, 2], [8, 10, 5], [14, 7, 2], [16, 9, 3], [19, 7, 2], [22, 5, 2], [24, 7, 6], [32, 3, 3], [36, 7, 2], [38, 10, 2], [40, 10, 5], [46, 9, 2], [48, 9, 3], [52, 5, 2], [54, 2, 2], [56, 2, 4], [60, 7, 4]],
       B: [[2, 7, 2], [4, 12, 4], [10, 14, 2], [12, 10, 4], [16, 9, 2], [18, 12, 2], [20, 14, 4], [26, 12, 2], [28, 7, 4], [32, 15, 3], [36, 14, 2], [38, 10, 2], [40, 14, 4], [46, 10, 2], [48, 9, 4], [52, 12, 4], [56, 10, 3], [60, 7, 4]] },
     'рок': { bpm: 126, swing: 0, prog: [[0, m3], [0, m3], [8, M3], [10, M3]],
-      rh: [[0, 0, 3, 0, 5, 0, 7, 5], [0, 0, 3, 0, 5, 0, 3, 0], [0, 0, 0, 0, 0, 0, 7, 0], [0, 0, 0, 0, 0, 7, 0, 7]], rhW: 'sawtooth', pow: true,
+      rh: [[0, 0, 3, 0, 5, 0, 7, 5], [0, 0, 3, 0, 5, 0, 3, 0], [0, 0, 0, 0, 0, 0, 7, 0], [0, 0, 0, 0, 0, 7, 0, 7]], rhW: 'square', pow: true,
       bass: [0, 0, 0, 0, 0, 0, 0, 0], bassW: 'p25', lead: 'p12', leadOct: 0, kick: [0, 3, 4], snare: [2, 6], hat: [0, 1, 2, 3, 4, 5, 6, 7],
       A: [[0, 12, 6], [6, 15, 2], [8, 12, 4], [12, 10, 4], [16, 8, 6], [22, 12, 2], [24, 10, 4], [28, 7, 4]],
       B: [[4, 19, 2, 'b'], [6, 17, 2], [8, 15, 6], [16, 20, 4], [20, 15, 4], [24, 17, 3, 'b'], [27, 14, 3], [30, 10, 2]] },
@@ -677,8 +744,8 @@ const AU = (() => {
       arp: [0, 1, 2, 3, 2, 1, 2, 3], arpW: 'p12', bass: [0, 12, 0, 12, 0, 12, 0, 12], bassW: 'p25', lead: 'triangle', leadOct: 0, kick: [0, 2, 4, 6], snare: [2, 6], hat: [1, 3, 5, 7],
       A: [[0, 16, 8], [8, 12, 6], [14, 14, 2], [16, 16, 4], [20, 19, 4], [24, 14, 8]],
       B: [[0, 9, 2], [2, 12, 2], [4, 16, 4], [8, 17, 4], [12, 12, 4], [16, 19, 6], [22, 16, 2], [24, 14, 4], [28, 11, 4]] },
-    'панк': { bpm: 168, swing: 0, prog: [[0, M3], [7, M3], [9, m3], [5, M3]],
-      rh: [[0, 0, 0, 0, 0, 0, 0, 0]], rhW: 'sawtooth', pow: true, bass: [0, 0, 0, 0, 0, 0, 0, 0], bassW: 'p25', lead: 'p25', leadOct: 0, kick: [0, 3, 4, 7], snare: [2, 6], hat: [0, 2, 4, 6],
+    'панк-рок': { bpm: 168, swing: 0, prog: [[0, M3], [7, M3], [9, m3], [5, M3]],
+      rh: [[0, 0, 0, 0, 0, 0, 0, 0]], rhW: 'square', pow: true, bass: [0, 0, 0, 0, 0, 0, 0, 0], bassW: 'p25', lead: 'p25', leadOct: 0, kick: [0, 3, 4, 7], snare: [2, 6], hat: [0, 2, 4, 6],
       A: [[0, 12, 2], [2, 12, 2], [4, 16, 4], [8, 14, 2], [10, 14, 2], [12, 19, 4], [16, 21, 4], [20, 16, 4], [24, 17, 2], [26, 16, 2], [28, 14, 4]],
       B: [[0, 24, 4], [8, 19, 4], [16, 21, 4], [24, 17, 4], [28, 19, 4]] },
     'диско': { bpm: 118, swing: 0, prog: [[0, m7], [8, M3], [3, M3], [10, M3]],
@@ -723,29 +790,34 @@ const AU = (() => {
     g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0005, t + d);
     s.connect(f); f.connect(g); g.connect(dest || master); s.start(t); s.stop(t + d + 0.02);
   }
-  function kick(t) { if (!ctx) return; const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.11); g.gain.setValueAtTime(0.2, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.16); o.connect(g); g.connect(music); o.start(t); o.stop(t + 0.18); }
+  function kick(t) { if (!ctx) return; const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.11); g.gain.setValueAtTime(0.2, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.16); o.connect(g); g.connect(music); o.start(t); o.stop(t + 0.18); }
   function build(genre, lvl) {
-    const g = GENRES[genre] || GENRES['фолк'], len = g.prog.length * 8, lead = new Array(len).fill(null);
-    for (const e of (lvl % 2 ? g.B : g.A)) lead[e[0] % len] = e;
-    return { g, lvl, lead, key: KEYS[lvl] || 0, stepDur: 60 / g.bpm / 2, len };
+    const g = GENRES[genre] || GENRES['фолк'], spb = g.spb || 8, len = g.prog.length * spb, lead = new Array(len).fill(null);
+    for (const e of ((lvl % 2 && g.B) || g.A)) lead[e[0] % len] = e;
+    return { g, lvl, lead, spb, key: KEYS[lvl] || 0, stepDur: 240 / g.bpm / spb, len };
   }
+  const GATE = { lead: 0, bass: 1, rh: 1, stab: 1, kick: 2, snare: 2, hat: 2, shaker: 2 };   // с какой площадки вступает партия, если жанр не задал своё
   function stepOnce() {
-    const { g, lvl, lead, stepDur: sd, len } = spec, s = step % 8, bar = Math.floor(step / 8), [root, tones] = g.prog[bar];
-    const t = nextT + (s % 2 ? g.swing * sd : 0), k = spec.key, full = lvl >= 3;
+    const { g, lvl, lead, stepDur: sd, len, spb } = spec, s = step % spb, bar = Math.floor(step / spb), [root, tones] = g.prog[bar];
+    const t = nextT + (s % 2 ? g.swing * sd : 0), k = spec.key, full = lvl >= 3, on = p => lvl >= ((g.gate && g.gate[p] != null) ? g.gate[p] : GATE[p]);
+    const mode = g.mode ? g.mode(bar) : null, quiet = mode === 'clean';   // в чистой части нет риффа и барабанов
     const l = lead[step];
-    if (l) { const f = hz(k + 12 + l[1] + g.leadOct * 12), d = sd * l[2] * 0.96; tone(f, t, d, g.lead, lvl === 0 ? 0.03 : 0.04, music, { vib: 1, hold: 1, soft: 1, bend: l[3] === 'b' }); if (lvl >= 4) tone(f * 2.005, t, d, 'triangle', 0.012, music, { hold: 1, soft: 1 }); }
-    if (g.arp) { const a = g.arp[s]; if (a != null) { const semi = a === 3 ? 12 + tones[0] : tones[a % tones.length]; tone(hz(k + root + semi), t, sd * 1.6, g.arpW, 0.022, music); } }
-    if (g.rh && lvl >= 1) { const pat = g.rh[bar % g.rh.length], v = pat[s]; if (v != null) { const f = hz(k + root + v - 12), acc = s % 4 === 0 ? 1.25 : 1; tone(f, t, sd * 0.55, g.rhW, 0.017 * acc, music); if (g.pow) tone(f * 1.498, t, sd * 0.55, g.rhW, 0.012 * acc, music); } }
-    if (g.stab && g.stab.includes(s) && lvl >= 1) for (const c of tones.slice(1)) tone(hz(k + root + c), t, sd * 0.5, g.stabW, 0.012, music);
-    const b = g.bass[s];
-    if (b != null && (lvl >= 1 || !g.arp)) tone(hz(k + root + b - 12), t, sd * 0.92, g.bassW, g.bassW === 'triangle' ? 0.075 : 0.035, music);
-    if (lvl >= 2) {
-      if (g.kick.includes(s)) kick(t);
-      if (g.snare.includes(s)) { noise(t, 0.11, full ? 0.06 : 0.035, 'bandpass', 1800, music); tone(190, t, 0.05, 'triangle', 0.03, music); }
-      if (g.hat.includes(s)) noise(t, 0.03, s % 2 ? 0.01 : 0.016, 'highpass', 7000, music);
-    }
-    if (g.shaker && lvl >= 2 && g.shaker.includes(s)) noise(t, 0.05, 0.012, 'highpass', 5000, music);
+    if (l && on('lead')) { const f = hz(k + 12 + l[1] + g.leadOct * 12), d = sd * l[2] * 0.96; tone(f, t, d, g.lead, lvl === 0 ? 0.03 : 0.04, music, { vib: 1, hold: 1, soft: 1, bend: l[3] === 'b' }); if (lvl >= 4) tone(f * 2.005, t, d, 'triangle', 0.012, music, { hold: 1, soft: 1 }); }
+    if (g.arp && mode !== 'drive') { const a = g.arp[s]; if (a != null) { const semi = a === 3 ? 12 + tones[0] : tones[a % tones.length]; tone(hz(k + root + semi), t, sd * 1.6, g.arpW, 0.022, music); } }
+    // акустическая гитара: шесть «струн» аккорда, щипок с быстрым затуханием
+    const V6 = [0, 7, 12, 12 + tones[1], 19, 24];
+    if (g.pick && mode !== 'strum') { const st = g.pick[s]; if (st != null) { const f = hz(k + root + V6[st]); tone(f, t, 0.5, 'p25', st < 2 ? 0.04 : 0.026, music); tone(f, t, 0.18, 'triangle', 0.02, music); if (lvl >= 4) tone(f * 2, t, 0.3, 'p12', 0.007, music); } }
+    if (g.strum && mode !== 'pick') { const d = g.strum[s]; if (d) { const down = d === 'd', acc = s === 0 ? 1.35 : 1; (down ? [0, 1, 2, 3, 4, 5] : [5, 4, 3, 2]).forEach((si, i) => tone(hz(k + root + V6[si]), t + i * 0.012, down ? 0.55 : 0.3, 'p25', (down ? 0.02 : 0.014) * acc, music)); noise(t, 0.035, 0.007 * acc, 'highpass', 2500, music); if (lvl >= 4 && down) tone(hz(k + root + 24), t + 0.03, 0.4, 'p12', 0.006, music); } }
+    if (g.rh && on('rh') && !quiet) { const pat = g.rh[bar % g.rh.length], v = pat[s]; if (v != null) { const f = hz(k + root + v - 12), acc = s % 4 === 0 ? 1.25 : 1; tone(f, t, sd * 0.55, g.rhW, 0.017 * acc, music); if (g.pow) tone(f * 1.498, t, sd * 0.55, g.rhW, 0.012 * acc, music); } }
+    if (g.stab && g.stab.includes(s) && on('stab')) for (const c of tones.slice(1)) tone(hz(k + root + c), t, sd * 0.5, g.stabW, 0.012, music);
+    let b = g.bass[s]; if (b != null && b >= 100) b = tones[(b - 100) % tones.length];
+    if (b != null && (on('bass') || (!g.arp && !g.pick && !g.strum))) tone(hz(k + root + b - 12), t, g.spb === 16 ? 0.5 : sd * 0.92, g.bassW, g.bassW === 'triangle' ? 0.075 : 0.035, music);
+    if (g.kick.includes(s) && on('kick') && !quiet) kick(t);
+    if (g.snare.includes(s) && on('snare') && !quiet) { noise(t, 0.11, full ? 0.06 : 0.035, 'bandpass', 1800, music); tone(190, t, 0.05, 'triangle', 0.03, music); }
+    if (g.hat.includes(s) && on('hat')) noise(t, 0.03, s % 2 ? 0.01 : 0.016, 'highpass', 7000, music);
+    if (g.shaker && g.shaker.includes(s) && on('shaker')) noise(t, 0.05, 0.012, 'highpass', 5000, music);
     nextT += sd; step = (step + 1) % len;
+    if (step === 0 && list.length > 1 && ++loops >= 2) { const rest = list.filter(x => x !== cur); cur = rest[Math.floor(Math.random() * rest.length)]; spec = build(cur, lvl); loops = 0; }
   }
   function pump() {
     if (!ctx || !spec || !on) return;
@@ -762,7 +834,11 @@ const AU = (() => {
     [ctx, master, music, nbuf, P25, P12, spec, step, nextT, on] = keep;
     return buf.getChannelData(0);
   }
-  function setMusic(genre, lvl) { const k = genre + '|' + lvl; if (k === key) return; key = k; spec = build(genre, lvl); step = 0; nextT = 0; }
+  // genre — один жанр или список версий: из списка первая выбирается случайно, дальше они чередуются
+  function setMusic(genre, lvl) {
+    const arr = Array.isArray(genre) ? genre : [genre], k = arr.join() + '|' + lvl; if (k === key) return;
+    key = k; list = arr; cur = arr[Math.floor(Math.random() * arr.length)]; loops = 0; spec = build(cur, lvl); step = 0; nextT = 0;
+  }
   // 15 джинглов: по три на каждый уровень песни. [полутон, длительность в шагах]
   const J = [
     [[[7, 1], [6, 1], [3, 3]], [[4, 1], [3, 1], [0, 1], [-1, 3]], [[0, 2], [-5, 2], [-6, 4]]],
@@ -787,14 +863,14 @@ const AU = (() => {
     no: t => { tone(150, t, 0.1, 'p25', 0.06); tone(120, t + 0.08, 0.12, 'p25', 0.06); },
     coin: t => { tone(1318, t, 0.06, 'p25', 0.05); tone(1760, t + 0.06, 0.14, 'p25', 0.05); },
     up: t => [0, 4, 7, 12, 16].forEach((n, i) => tone(hz(15 + n), t + i * 0.07, 0.16, 'p25', 0.06)),
-    down: t => [7, 3, 0, -5].forEach((n, i) => tone(hz(3 + n), t + i * 0.12, 0.2, 'sawtooth', 0.05)),
+    down: t => [7, 3, 0, -5].forEach((n, i) => tone(hz(3 + n), t + i * 0.12, 0.2, 'square', 0.05)),
     event: t => { tone(988, t, 0.08, 'triangle', 0.1); tone(1318, t + 0.09, 0.2, 'triangle', 0.1); },
     promo: t => { tone(660, t, 0.05, 'p25', 0.04); tone(990, t + 0.05, 0.1, 'p25', 0.04); }
   };
   function sfx(n) { if (ctx && on && SFX[n]) SFX[n](ctx.currentTime + 0.01); }
   function setOn(v) { on = v; if (master) master.gain.value = v ? 1 : 0; }
   function loud(v) { if (music) music.gain.setTargetAtTime(v ? 0.9 : 0.55, ctx.currentTime, 0.3); }
-  return { init, setMusic, jingle, sfx, setOn, loud, render, GENRES, ready: () => !!ctx };
+  return { init, setMusic, jingle, sfx, setOn, loud, render, GENRES, ready: () => !!ctx, now: () => cur };
 })();
 
 </script>
@@ -1026,7 +1102,7 @@ const SC = (() => {
     const S = V.S, L = S.lvl, A = V.act, b = S.busy;
     const music = b && ['song', 'feat', 'album', 'gig', 'tour', 'reel', 'star', 'corp'].includes(b.id), gig = !!(b && (b.id === 'gig' || b.id === 'tour'));
     g.setTransform(1, 0, 0, 1, 0, 0);
-    if (L === 0) HOME[A.homeId || A.id](t); else VENUE[L](t, gig, S.street | 0, S.club | 0);
+    if (L === 0) HOME[A.homeId || A.id](t); else VENUE[L](t, gig, Math.max(0, S.street | 0), Math.max(0, S.club | 0));
     const small = L >= 4, pre = small ? 's_' : '', feet = [128, 126, 104, 104, 94, 90][L], gap = small ? 22 : 36;
     // группа
     const nm = Math.min(S.members, A.maxM), total = A.ppl + nm, variant = (A.id === 'solt' || A.id === 'rynok') ? L : A.id === 'vrubel' ? S.albums % 4 : 0;
@@ -1155,7 +1231,7 @@ const SC = (() => {
       if (d.id === 'gig' || d.id === 'corp') AU.sfx('coin'); else if (AM[d.id].tab === 1) AU.sfx('promo'); }
     else if (type === 'win') { $('#winT').textContent = 'Песен: ' + G.S.songs.length + ', альбомов: ' + G.S.albums + '. Начиналось всё с места «' + act().home + '».'; $('#win').hidden = false; AU.jingle(4); }
   });
-  const music = () => AU.setMusic(genre(), G.S.lvl);
+  const music = () => AU.setMusic(musicOf(act(), G.S.lvl, G.S.albums), G.S.lvl);
   function toast(title, text) { $('#toastT').textContent = title; $('#toastD').textContent = text; $('#toast').hidden = false; toastT = 5; }
 
   /* ---------- цели площадки ---------- */
@@ -1244,23 +1320,7 @@ const SC = (() => {
     }
     const w = why(a);
     if (w) { say(w, 'bad'); AU.sfx('no'); return; }
-    if (id === 'star' && G.pay) { if (G.S.paidHit > 0) { G.S.paidHit--; doAct('star'); AU.sfx('tap'); paint(); } else buyHit(); return; }   // оплаченный, но не записанный хит повторно не продаём
     doAct(id); AU.sfx('tap'); paint();
-  }
-  // хит за звезду: бот выписывает счёт, Telegram показывает окно оплаты, после оплаты запускаем запись хита
-  let paying = false;
-  async function buyHit() {
-    if (paying) return; paying = true; say('Открываю оплату…');
-    try {
-      const r = await fetch(PAY_URL + '/invoice', { method: 'POST' }), j = await r.json();
-      if (!j.link) throw new Error(j.error || 'нет ссылки');
-      window.Telegram.WebApp.openInvoice(j.link, status => {
-        paying = false;
-        if (status === 'paid') { if (doAct('star')) { AU.sfx('coin'); say('Оплачено. Пишем хит!', 'hit'); } else { G.S.starAt = 0; say('Оплачено. Хит ждёт: нажми ещё раз, когда освободишься', 'hit'); G.S.paidHit = (G.S.paidHit || 0) + 1; } }
-        else say(status === 'cancelled' ? 'Оплата отменена' : 'Оплата не прошла', 'bad');
-        paint();
-      });
-    } catch (e) { paying = false; say('Не удалось открыть оплату. Попробуй позже', 'bad'); AU.sfx('no'); }
   }
   $('#hintGo').addEventListener('click', () => { $('#hint').hidden = true; if (pending) press(pending); pending = null; });
   $('#hintNo').addEventListener('click', () => { $('#hint').hidden = true; pending = null; });
@@ -1317,7 +1377,7 @@ const SC = (() => {
       b.innerHTML = '<canvas width="110" height="78"></canvas><b>' + a.n + (G.S.done.includes(i) ? ' ★' : '') + '</b><small>' + a.slogan + '</small><em>' + a.genre + '</em><i>' + PERKS[a.pk] + '</i>';
       b.addEventListener('click', () => pick(i));
       // наведение или фокус: звучит жанр этого артиста, ушли — снова тема меню
-      const on = () => AU.setMusic(a.id === 'vrubel' ? VR_GENRES[0] : a.genre, 4), off = () => { if (!$('#start').hidden && $('#mk').hidden) AU.setMusic('меню', 2); };
+      const on = () => AU.setMusic(musicOf(a, 0, 0), 4), off = () => { if (!$('#start').hidden && $('#mk').hidden) AU.setMusic('меню', 2); };
       b.addEventListener('pointerenter', on); b.addEventListener('focus', on); b.addEventListener('pointerleave', off); b.addEventListener('blur', off);
       c.appendChild(b);
       SC.lineup(b.querySelector('canvas').getContext('2d'), a, 0, 55, 76, 32);
@@ -1374,7 +1434,7 @@ const SC = (() => {
     IMG = new Image();
     IMG.onload = () => { SC.set(IMG, ATLAS); if (G.S.act === null) showStart(); else begin(); requestAnimationFrame(frame); };
     IMG.src = ATLAS_SRC;
-    try { const tg = window.Telegram && window.Telegram.WebApp; if (tg && tg.initData) { tg.ready(); tg.expand(); G.pay = !!(PAY_URL && tg.openInvoice); } } catch (e) {}   // в Telegram: развернуть на весь экран, включить оплату хита
+    try { const tg = window.Telegram && window.Telegram.WebApp; if (tg && tg.initData) { tg.ready(); tg.expand(); } } catch (e) {}   // в Telegram: развернуть на весь экран
     // браузер не даёт звучать до первого касания: включаем звук при первом же нажатии где угодно
     const wake = () => AU.init(); document.addEventListener('pointerdown', wake, { once: true }); document.addEventListener('keydown', wake, { once: true });
     setInterval(save, 4000);
