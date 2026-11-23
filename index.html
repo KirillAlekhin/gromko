@@ -269,7 +269,7 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
       <button id="mReset">Сменить группу</button>
       <button class="hot" id="mClose">Назад в игру</button>
     </div>
-    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 23.11 13:20</p>
+    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 23.11 13:35</p>
   </div></div>
   <div class="modal" id="mk" hidden><div>
     <div class="h2">Своя группа</div>
@@ -384,14 +384,14 @@ const W_ = {
     'Зоя Дисторшн, альманах «Шум»', 'Глеб Метроном, подкаст «Раз-два, раз»', 'Тамара Реверб, журнал «Эхо подвала»', 'Лев Бемоль, радио «Перегруз»'],
   quotes: ['Три аккорда, два притопа — и стадион. Я плакал. От зависти.',
     '{songs} — и ни одной про меня. Обидно, но талантливо.',
-    'Услышал «{hit}» в такси. Таксист подпевал. Я вышел раньше.',
+    'Услышал „{hit}“ в такси. Таксист подпевал. Я вышел раньше.',
     'Обещал съесть шляпу, если они соберут стадион. Шляпа была невкусная.',
     '{band} — это когда соседи стучат по батарее в такт.',
     'Десять из десяти. Одиннадцать, если уберут вторую гитару.',
     'На третьей песне я понял: это надолго. Так и вышло.',
     'Мама спросила, кто это орёт. Теперь у неё билет в фан-зону.',
     '{albums} — и всё лучше, чем я ожидал. Ожидал я худшего.',
-    '«{hit}» застряла в голове. Врач сказал, это навсегда.',
+    '„{hit}“ застряла в голове. Врач сказал, это навсегда.',
     'Пришёл разгромить, ушёл с мерчем. Позор мне, слава {band}.',
     'Звук как у ремонта за стеной. Только хочется, чтобы не кончался.',
     'Раньше они играли для тридцати человек. Я был тридцать первым и ушёл. Зря.',
@@ -400,7 +400,7 @@ const W_ = {
     'Слушал стоя. Сидячих мест не досталось.',
     'Гениально. Или громко. В моём возрасте уже не различаю.',
     '{min} — и они на стадионе. Я дольше выбираю, что послушать.',
-    'После «{hit}» я уволился из журнала и купил гитару. Спасибо, наверное.',
+    'После „{hit}“ я уволился из журнала и купил гитару. Спасибо, наверное.',
     'Бис длился дольше концерта. Никто не возражал.',
     'Это было громко. И, чёрт возьми, вместе.',
     'Мой кот ушёл на второй песне. Вернулся к автограф-сессии.',
@@ -1697,7 +1697,7 @@ const SC = (() => {
     // шапка: логотип и плашка
     let y = 21 * u; const lg = $('#start .logo'), lw = 30 * u, lh = lg.naturalWidth ? lw * lg.naturalHeight / lg.naturalWidth : 10 * u;
     c.imageSmoothingEnabled = false; if (lg.naturalWidth) c.drawImage(lg, X, y, lw, lh);
-    c.font = '400 ' + 3 * u + 'px ' + PXF; const tag = 'СТАДИОН ВЗЯТ', tw = c.measureText(tag).width + 4.4 * u, th = 6 * u, tx = W - X - tw, ty = y + (lh - th) / 2;
+    c.font = '400 ' + 3 * u + 'px ' + PXF; const tag = 'СТАДИОН  ВЗЯТ', tw = c.measureText(tag).width + 4.4 * u, th = 6 * u, tx = W - X - tw, ty = y + (lh - th) / 2;
     c.fillStyle = '#8a1c33'; c.fillRect(tx, ty + 0.8 * u, tw, th); c.fillStyle = HOT; c.fillRect(tx, ty, tw, th); c.fillStyle = '#14102a'; c.fillText(tag, tx + 2.2 * u, ty + th * 0.68);
     // название группы
     y += lh + 2.2 * u; const ns = fitFont(d.name, '400', 11 * u, PXF, CW, 5 * u); y += ns * 0.92;
@@ -1728,7 +1728,7 @@ const SC = (() => {
     const lhq = 4.7 * u, qh = lines.length * lhq + 4.4 * u; c.fillStyle = HOT; c.fillRect(X, y - 0.6 * u, 1.2 * u, qh); c.fillStyle = INK; lines.forEach((t, i) => c.fillText(t, qx, y + 3.2 * u + i * lhq));
     c.fillStyle = DIM; c.font = '500 ' + 2.9 * u + 'px ' + TXF; c.fillText(cut('— ' + d.critic, qmax), qx, y + lines.length * lhq + 3.4 * u);
     // подпись
-    c.textAlign = 'center'; const f1 = 'Собери свою группу: ', f2 = '«Громко и вместе»', f3 = ' в Telegram'; c.font = '600 ' + 3 * u + 'px ' + TXF; const w1 = c.measureText(f1).width, w3 = c.measureText(f3).width; c.font = '400 ' + 2.9 * u + 'px ' + PXF; const w2 = c.measureText(f2).width;
+    c.textAlign = 'center'; const f1 = 'Собери свою группу: ', f2 = '«Громко  и  вместе»', f3 = ' в Telegram'; c.font = '600 ' + 3 * u + 'px ' + TXF; const w1 = c.measureText(f1).width, w3 = c.measureText(f3).width; c.font = '400 ' + 2.9 * u + 'px ' + PXF; const w2 = c.measureText(f2).width;
     let fx = (W - w1 - w2 - w3) / 2; const fy = H - 9 * u; c.textAlign = 'left'; c.font = '600 ' + 3 * u + 'px ' + TXF; c.fillStyle = DIM; c.fillText(f1, fx, fy); fx += w1; c.font = '400 ' + 2.9 * u + 'px ' + PXF; c.fillStyle = INK; c.fillText(f2, fx, fy); fx += w2; c.font = '600 ' + 3 * u + 'px ' + TXF; c.fillStyle = DIM; c.fillText(f3, fx, fy);
   }
   let cardRender = () => {};
