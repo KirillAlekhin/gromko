@@ -136,6 +136,17 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
 .card i{font-style:normal;font-size:.84em;color:var(--ok);line-height:1.15}
 .big{background:var(--hot);color:var(--edge);font-weight:700;padding:3cqw;box-shadow:0 1cqw 0 #8a1c33;text-align:left}
 .big.alt{background:var(--ink);box-shadow:0 1cqw 0 var(--hot)}
+#card,#cardFull{align-items:center;gap:2.6cqw;z-index:7}#card>*,#cardFull>*{flex:none}
+#cardC,#cardImg{width:74cqw;aspect-ratio:9/16;border-radius:3cqw;box-shadow:1.2cqw 1.2cqw 0 var(--hot);background:var(--panel)}
+#cardImg{width:86cqw;-webkit-touch-callout:default;user-select:auto;-webkit-user-select:auto}
+.cardrow{display:grid;grid-template-columns:1.25fr 1fr;gap:2.4cqw;width:100%}.cardrow .big{text-align:center}
+.big.ghost{background:var(--panel-hi);color:var(--ink);box-shadow:0 1cqw 0 var(--edge)}
+#card.shop #cardC{width:57cqw}
+.bgrow{display:grid;grid-template-columns:repeat(4,1fr);gap:2cqw;width:100%}
+.bgrow button{font-family:var(--font);font-weight:600;font-size:3.2cqw;color:var(--ink);padding:1.2cqw 0 1.4cqw;display:flex;flex-direction:column;align-items:center;gap:1cqw;border:.6cqw solid transparent}
+.bgrow button.on{border-color:var(--coin)}.bgrow i{display:block;width:100%;height:7cqw}.bgrow small{color:var(--coin);font-size:2.9cqw}
+.big.star{background:var(--coin);color:var(--edge);box-shadow:0 1cqw 0 #8a5a0a;text-align:center;width:100%}
+.cardnext{color:var(--dim);font-family:var(--px);font-size:4cqw;padding:1.6cqw 4cqw}
 .big small{display:block;font-weight:500;font-size:.8em;margin-top:.6cqw}
 .h2{font-weight:700;font-size:1.7em;color:var(--coin);line-height:1.1;text-wrap:balance}
 .modal{position:absolute;inset:0;background:rgba(10,8,24,.8);z-index:6;display:flex;align-items:center;justify-content:center;padding:6cqw;font-size:4.1cqw;font-weight:500}
@@ -244,16 +255,21 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
     <p class="c" id="goalTip"></p>
     <div class="row"><button id="goalOk">Понятно</button></div>
   </div></div>
+  <div class="modal" id="buyM" hidden><div>
+    <div class="h2" id="buyH"></div><p id="buyT"></p>
+    <div class="col"><button class="hot" id="buyGo"></button><button id="buyNo">Подожду</button></div>
+  </div></div>
   <div class="modal" id="menu" hidden><div>
     <div class="h2">Меню</div>
     <div class="col">
       <button id="mGoal">Цели площадки</button>
       <button id="mTour">Как играть</button>
       <button id="mArtist">Артист и прокачка</button>
+      <button id="mCard" hidden>Карточка группы</button>
       <button id="mReset">Сменить группу</button>
       <button class="hot" id="mClose">Назад в игру</button>
     </div>
-    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 22.11 17:34</p>
+    <p style="color:var(--dim);font-size:3.3cqw" id="buildInfo">Сборка 23.11 13:20</p>
   </div></div>
   <div class="modal" id="mk" hidden><div>
     <div class="h2">Своя группа</div>
@@ -273,6 +289,16 @@ u{text-decoration:none}u.m{color:var(--coin)}u.e{color:var(--fire)}
     <img class="px logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAAwCAYAAAACT9icAAAEGklEQVR42u1cPZLrIAwGD82mzjFylRwilaucxtWrfAhfJcdIHZdslR2vHxghJCGyaGarNTJ81h+IL8Z06cIs1hhjXs+Hxyo4nS9oHe+xOQJ9D0R3bV2xMan3YcZRrjVXHIUSrJFux2GBTT3PARrV+iXepQG3oVSBv949N3glH5HCAF7Ph6dap7/ek7pizxyt5ev2779xtXEjMzJuL6UyktajWMrANOOmysj2kZHyA1LooopmlLI3MLtMVhtugwQI+79aH7MEsHUeVUV4CQOj+h4ux0soDS/10VJgHc3tSLe/3r1dJttKqoS+A7ImLGbrPBp/M2jcxNKlXSa7/aNMEdSeGdO/zqNoyoTWYRROwxVQwEcYqUW8zOhrRYDg3M5T9B3rPLICqlVARnmAW0kWcNyLe4fhXEOU8mBsJIylF0gpQFn/bTGQPK9rencpVYCXpEytOEAOUGs45qB5O44FK/dMicrQpdNwjsFDnuWKhEOLBiZVgEu0pFrouKjoXVIbll0mmypC13ksqvPsMlmqOlECp1gkyjlewGJWGqGdpgjFXTNwpjPOM8Xc6KttA6AiXcbOzyjTFdYIaqbM7ZxTB6nbtMmFGzYAOElDwn7kUs8MtV84z6A40nBK7zqPxpwnVtyK0uXb8jU2gEsBozCwGikoFEFS89gfltbGjTRdSqSU0/liczwr1IznqPdixsAVQY50h3bdGnBzVMpO54vljoR2may/GU+VrnMieG60h+AB0Rmbdw7W1LhVLfwlTpNzG+wUDXns2kvfezT+6H8hA9SKW5cuXbqYdihxXUz1264ttLCKjez1fPg9J3C/cIptfAxMKl5gzhxLOKNSc+PuMUpgMHwqu0db1MLwHz8FqyG0OO7QXcoHpOZAUq03xJcsNRRuQ4PwQEv1DdIGxslI0ub5VPNpPaI5quIzdKqcuiiHvTNeyp5pycA4WFbSrTMXMzCKiEZx3900dJmS0yl/HKtyH5X9FgbE2iWJDVvv1pRSsJxRqFPG2kpHY2sytFwNVlJuwzYEnhS1DRqJfx3/HGCQbD4DaWl2mazUrRkMBlWvX3MYxhGNX3O6jtVY0Ab4fjzEwf8EW2mdx58PT7FgLXfgco8CUmtvsTkdw8BV5Q1ubnJqTpm1arq1QfYUa7rEkGEptuUSHEhJQ9Z4Jla6/oEbgNQEcy4BtgJw6vYqFl/q0/mmIlmK0RIrSLnSHaXOnI0D1BEw/MeaZUEpBo56EjngffKv62jkP9ZK00NLVPvclCm9Q9unM6oUr+GXjMga5Op+L0soVXJ6MSdz6c/tLqWAay0NYeccwqhVYofDeCXlDmfPVYTS01LP5eiVIDdv54zpMUIMrGQdnBg4jW0VMJewse38e85Uv8PWiSRdijY8nfPYpUuXLprkG2isqHR7xaigAAAAAElFTkSuQmCC" alt="Громко и вместе">
     <button class="big" id="titleGo" style="text-align:center;padding:3.4cqw 9cqw">Начали</button>
   </div>
+  <div class="over" id="card" hidden>
+    <div class="h2" style="text-align:center">Стадион твой!</div>
+    <p style="text-align:center;margin-top:-1.4cqw">Покажи друзьям, чего добился.</p>
+    <canvas id="cardC" width="1080" height="1920"></canvas>
+    <div class="bgrow" id="bgRow" hidden></div>
+    <div class="cardrow" id="cardAct"><button class="big" id="cardShare">Поделиться</button><button class="big ghost" id="cardSave">Сохранить</button></div>
+    <button class="big star" id="bgBuy" hidden>Открыть 3 фона за ★ 5</button>
+    <button class="cardnext" id="cardNext">Дальше</button>
+  </div>
+  <div class="over" id="cardFull" hidden><p style="text-align:center;color:var(--ink)">Зажми картинку и выбери «Сохранить» или «Поделиться».</p><img id="cardImg" alt="Карточка группы"><button class="cardnext" id="cardBack">Назад</button></div>
   <div class="over" id="win" hidden style="justify-content:center">
     <div class="h2">Стадион твой</div>
     <p id="winT"></p>
@@ -353,6 +379,33 @@ const W_ = {
       ['Плевать', 'Чихать'], ['Прихоть', 'Каприз'], ['Стану песней', 'Стану рилсом'], ['Тайны', 'Сплетни'], ['Хоррор', 'Триллер'], ['Через тернии в никуда', 'Через пробки в никуда'],
       ['Я буду ждать', 'Я подожду'], ['Нормальная музыка', 'Ненормальная музыка']]
   },
+  // карточка итогов: выдуманные критики и их отзывы. {band} группа, {hit} главный хит, {songs} «47 песен», {albums} «2 альбома», {min} «58 минут»
+  critics: ['Аркадий Фузз, журнал «Громче некуда»', 'Инна Децибел, портал «Ухо востро»', 'Эдуард Бас, газета «Вечерний саундчек»', 'Марк Рифф, канал «Три аккорда»',
+    'Зоя Дисторшн, альманах «Шум»', 'Глеб Метроном, подкаст «Раз-два, раз»', 'Тамара Реверб, журнал «Эхо подвала»', 'Лев Бемоль, радио «Перегруз»'],
+  quotes: ['Три аккорда, два притопа — и стадион. Я плакал. От зависти.',
+    '{songs} — и ни одной про меня. Обидно, но талантливо.',
+    'Услышал «{hit}» в такси. Таксист подпевал. Я вышел раньше.',
+    'Обещал съесть шляпу, если они соберут стадион. Шляпа была невкусная.',
+    '{band} — это когда соседи стучат по батарее в такт.',
+    'Десять из десяти. Одиннадцать, если уберут вторую гитару.',
+    'На третьей песне я понял: это надолго. Так и вышло.',
+    'Мама спросила, кто это орёт. Теперь у неё билет в фан-зону.',
+    '{albums} — и всё лучше, чем я ожидал. Ожидал я худшего.',
+    '«{hit}» застряла в голове. Врач сказал, это навсегда.',
+    'Пришёл разгромить, ушёл с мерчем. Позор мне, слава {band}.',
+    'Звук как у ремонта за стеной. Только хочется, чтобы не кончался.',
+    'Раньше они играли для тридцати человек. Я был тридцать первым и ушёл. Зря.',
+    'Не понимаю, как это работает. Но работает на десять тысяч человек.',
+    'Ругать {band} бесполезно: стадион меня не слышит.',
+    'Слушал стоя. Сидячих мест не досталось.',
+    'Гениально. Или громко. В моём возрасте уже не различаю.',
+    '{min} — и они на стадионе. Я дольше выбираю, что послушать.',
+    'После «{hit}» я уволился из журнала и купил гитару. Спасибо, наверное.',
+    'Бис длился дольше концерта. Никто не возражал.',
+    'Это было громко. И, чёрт возьми, вместе.',
+    'Мой кот ушёл на второй песне. Вернулся к автограф-сессии.',
+    'Единственный минус: теперь они не сыграют у меня на кухне.',
+    'Пять звёзд. Шестую оставил себе на память.'],
   // способ 3: редкое имя
   rare: ('Евстигней Аполлинария Серафима Пантелеймон Агафья Харитон Феврония Мефодий Евдокия Варфоломей Пелагея Никодим Устинья Ефросинья Трифон Акулина Прохор Матрёна Ермолай Глафира ' +
     'Савелий Фёкла Тихон Капитолина Лукерья Архип Домна Елисей Зиновий Маврикий Олимпиада Порфирий Степанида Фаддей Христофор Эраст Юлиан Ярополк Мирон Аграфена').split(' ')
@@ -443,7 +496,8 @@ function fresh() {
   return { v: 2, act: null, lvl: 0, maxLvl: 0, money: 300, L: 0, E: 100, songs: [], instr: 0, reel: 0, studio: false, members: 0,
     hype: 0, radio: 0, busy: null, albums: 0, t: 0, won: false, mode: null, photo: false,
     stats: { vocal: 0, texts: 0, charisma: 0, stamina: 0 }, train: null, seen: {}, evT: 200, rb: 0, last: 0, offline: null,
-    starAt: 300, peak: 0, done: [], sound: true, custom: null, hitDone: false, street: -1, club: -1, band: [], roles: [] };
+    starAt: 300, peak: 0, done: [], sound: true, custom: null, hitDone: false, street: -1, club: -1, band: [], roles: [],
+    shop: { ids: [], bg: false, sel: 0 } };   // покупки за звёзды: учтённые платежи, открыты ли фоны карточки, выбранный фон
 }
 const S = () => G.S;
 const lv = () => LV[G.S.lvl], M = () => MM[G.S.lvl];
@@ -711,7 +765,7 @@ function tick(dt) {
   if (s.train) { s.train.t += dt; if (s.train.t >= s.train.dur) { const k = s.train.k; s.stats[k]++; s.train = null; emit('train', { k }); log(STATS[k].n + ': уровень ' + s.stats[k], 'hit'); } }
   if (s.lvl > 0 && s.L < LV[s.lvl - 1].goalL * CFG.ROLLBACK_AT) { s.rb += dt; if (s.rb >= CFG.ROLLBACK_T) rollback(); } else s.rb = 0;
   if (s.t >= s.evT) { s.evT = s.t + CFG.EVENT_GAP[0] + G.rnd() * (CFG.EVENT_GAP[1] - CFG.EVENT_GAP[0]); fireEvent(); }
-  if (s.lvl === 5 && s.L >= lv().goalL && !s.won) { s.won = true; emit('win'); }
+  if (s.lvl === 5 && s.L >= lv().goalL && !s.won) { s.won = true; s.wonAt = s.t; s.wonL = s.L; emit('win'); }
   // страховка: битое число не должно ломать сохранение
   for (const k of ['L', 'money', 'E']) { if (!Number.isFinite(s[k]) || s[k] < 0) { if (typeof console !== 'undefined') console.error('state guard', k, s[k]); s[k] = SAFE[k] || 0; } else SAFE[k] = s[k]; }
 }
@@ -727,7 +781,33 @@ function offline(now) {
 }
 function collect() { const s = S(), o = s.offline; if (!o) return; s.offline = null; gainM(o.money); log('Донаты, пока тебя не было: +' + fmt(o.money) + ' ₽', 'good'); }
 
-if (typeof module !== 'undefined') module.exports = { EV, WILD, bandName, WORDS, CUSTOM, rollCustom, CFG, LV, ACTS, A, AM, G, fresh, tick, B, strike, doAct, why, move, canMove, goalOk, train, whyTrain, statCost, att, lv, singles, lastSong, songFresh, moveCost, aE, STATS, offline, collect };
+// --- «Хит сейчас» (покупка): таймер обнуляется, хит пишется сразу и без траты энергии; если артист занят — хит просто готов
+function hitNow() {
+  const s = G.S, a = AM.star; s.starAt = Math.min(s.starAt, s.t);
+  if (s.busy || !a || (a.show && !a.show())) return false;
+  s.busy = { id: 'star', t: 0, dur: a.dur() }; emit('start', { id: 'star' }); return true;
+}
+// --- карточка итогов: всё, что показываем после стадиона
+const plural = (n, f) => { const a = Math.abs(n) % 100, b = a % 10; return f[a > 10 && a < 20 ? 2 : b === 1 ? 0 : b >= 2 && b <= 4 ? 1 : 2]; };
+// путь в «настоящей жизни»: одна минута игры = один месяц
+function lifeText(min) {
+  const y = Math.floor(min / 12), m = min % 12, a = [];
+  if (y) a.push(y + ' ' + plural(y, ['год', 'года', 'лет']));
+  if (m || !y) a.push(m + ' ' + plural(m, ['месяц', 'месяца', 'месяцев']));
+  return a.join(' ');
+}
+function cardData() {
+  const s = G.S, min = Math.max(1, Math.round((s.wonAt || s.t) / 60));
+  const hits = s.songs.map((x, i) => ({ n: x.n, q: x.q, r: x.r || 0, i })).sort((a, b) => b.q - a.q || b.r - a.r || a.i - b.i).slice(0, 3).map(x => ({ n: x.n, q: Q[x.q].n.toLowerCase() }));
+  const nS = s.songs.length, nA = s.albums, name = act().n;
+  let h = 7; for (const ch of name + '|' + nS + '|' + min) h = (h * 31 + ch.charCodeAt(0)) >>> 0;   // цитата постоянна для одного прохождения
+  const fill = t => t.replace('{band}', name).replace('{hit}', hits[0] ? hits[0].n.replace(/ \(feat\..*$/, '') : 'первая песня')
+    .replace('{songs}', nS + ' ' + plural(nS, ['песня', 'песни', 'песен'])).replace('{albums}', nA + ' ' + plural(nA, ['альбом', 'альбома', 'альбомов'])).replace('{min}', min + ' ' + plural(min, ['минута', 'минуты', 'минут']));
+  let qs = WORDS.quotes; if (!nA) qs = qs.filter(t => !t.includes('{albums}'));
+  return { name, hits, songs: nS, songsW: plural(nS, ['песня', 'песни', 'песен']), albums: nA, albumsW: plural(nA, ['альбом', 'альбома', 'альбомов']),
+    L: Math.round(s.wonL || Math.max(s.L, LV[5].goalL)), min, life: lifeText(min), quote: '«' + fill(qs[h % qs.length]) + '»', critic: WORDS.critics[(h >>> 8) % WORDS.critics.length] };
+}
+if (typeof module !== 'undefined') module.exports = { cardData, lifeText, plural, hitNow, EV, WILD, bandName, WORDS, CUSTOM, rollCustom, CFG, LV, ACTS, A, AM, G, fresh, tick, B, strike, doAct, why, move, canMove, goalOk, train, whyTrain, statCost, att, lv, singles, lastSong, songFresh, moveCost, aE, STATS, offline, collect };
 
 </script>
 <script>
@@ -1351,7 +1431,7 @@ const SC = (() => {
   const set = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const html = (el, v) => { if (el._h !== v) { el._h = v; el.innerHTML = v; } };   // сравниваем со своей строкой: innerHTML браузер переписывает (svg), и блок пересобирался каждый кадр, сбрасывая прокрутку
   const say = (msg, cls) => { const el = $('#log'); el.textContent = msg; el.className = 'log ' + (cls || ''); };
-  const paused = () => !$('#hint').hidden || !$('#win').hidden || !$('#goalM').hidden || !$('#menu').hidden || !$('#tour').hidden;
+  const paused = () => !$('#hint').hidden || !$('#win').hidden || !$('#card').hidden || !$('#cardFull').hidden || !$('#buyM').hidden || !$('#goalM').hidden || !$('#menu').hidden || !$('#tour').hidden;
   function float(txt, kind) {
     const d = document.createElement('div'); d.className = 'fl ' + kind; d.textContent = txt; d.style.left = (28 + Math.random() * 44) + '%';
     $('#scene').appendChild(d); setTimeout(() => d.remove(), 1500);
@@ -1374,7 +1454,7 @@ const SC = (() => {
     else if (type === 'start') AU.loud(d.id === 'gig' || d.id === 'tour');
     else if (type === 'done') { AU.loud(false); if (d.id === 'gig' || d.id === 'corp' || d.id === 'tour') bow = 1.4;   // поклон после выступления
       if (d.id === 'gig' || d.id === 'corp') AU.sfx('coin'); else if (AM[d.id].tab === 1) AU.sfx('promo'); }
-    else if (type === 'win') { $('#winT').textContent = 'Песен: ' + G.S.songs.length + ', альбомов: ' + G.S.albums + '. Начиналось всё с места «' + act().home + '».'; $('#win').hidden = false; AU.jingle(4); }
+    else if (type === 'win') { $('#winT').textContent = 'Песен: ' + G.S.songs.length + ', альбомов: ' + G.S.albums + '. Начиналось всё с места «' + act().home + '».'; AU.jingle(4); showCard(true); }
   });
   const music = () => AU.setMusic(musicOf(act(), G.S.lvl, G.S.albums), G.S.lvl);
   function toast(title, text) { $('#toastT').textContent = title; $('#toastD').textContent = text; $('#toast').hidden = false; toastT = 5; }
@@ -1480,6 +1560,7 @@ const SC = (() => {
       $('#hintGo').hidden = !!why(a); $('#hint').hidden = false; AU.sfx('tap'); return;
     }
     const w = why(a);
+    if (w && id === 'star' && G.S.t < G.S.starAt && shopOn()) { offerHit(); return; }
     if (w) { say(w, 'bad'); AU.sfx('no'); return; }
     doAct(id); AU.sfx('tap'); paint();
   }
@@ -1501,13 +1582,13 @@ const SC = (() => {
 
   /* ---------- меню ---------- */
   let resetArm = 0;
-  $('#menuB').addEventListener('click', () => { AU.init(); AU.sfx('tap'); const bi = $('#buildInfo'); bi.textContent = bi.textContent.split(' · ')[0] + ' · звук: ' + AU.state(); $('#mReset').textContent = 'Сменить группу'; resetArm = 0; $('#menu').hidden = false; });
+  $('#menuB').addEventListener('click', () => { AU.init(); AU.sfx('tap'); $('#mCard').hidden = !G.S.won; const bi = $('#buildInfo'); bi.textContent = bi.textContent.split(' · ')[0] + ' · звук: ' + AU.state(); $('#mReset').textContent = 'Сменить группу'; resetArm = 0; $('#menu').hidden = false; });
   $('#mClose').addEventListener('click', () => { $('#menu').hidden = true; });
   $('#mGoal').addEventListener('click', () => { $('#menu').hidden = true; showGoal(false); });
   $('#mTour').addEventListener('click', () => { $('#menu').hidden = true; showTour(0); });
   $('#mArtist').addEventListener('click', () => { $('#menu').hidden = true; renderArtist(); $('#artist').hidden = false; });
   $('#mReset').addEventListener('click', () => {
-    if (Date.now() - resetArm < 4000) { const done = G.S.done, seen = keepSeen(G.S.seen), snd = G.S.sound; G.S = fresh(); G.S.done = done; G.S.seen = seen; G.S.sound = snd; save(); listKey = ''; $('#menu').hidden = true; $('#artist').hidden = true; AU.setMusic('', 0); showStart(); }
+    if (Date.now() - resetArm < 4000) { const done = G.S.done, seen = keepSeen(G.S.seen), snd = G.S.sound, shop = G.S.shop; G.S = fresh(); G.S.done = done; G.S.seen = seen; G.S.sound = snd; if (shop) G.S.shop = shop; save(); listKey = ''; $('#menu').hidden = true; $('#artist').hidden = true; AU.setMusic('', 0); showStart(); }
     else { resetArm = Date.now(); $('#mReset').textContent = 'Прогресс сгорит. Точно?'; }
   });
 
@@ -1566,8 +1647,157 @@ const SC = (() => {
   $('#mkR').addEventListener('click', rollMk);
   $('#mkGo').addEventListener('click', () => { mk.n = $('#mkN').value.trim().slice(0, 28) || mk.n; G.S.custom = mk; pick(CUSTOM); });
   $('#mkX').addEventListener('click', () => { $('#mk').hidden = true; AU.setMusic('меню', 2); });
+  // ---------- карточка итогов: картинка 1080×1920 для сторис
+  const SHARE_API = (window.GV_SHARE_API || 'https://super-mud-344a.alekhin-k.workers.dev').replace(/\/$/, '');   // адрес скрипта бота: нужен, чтобы Telegram смог открыть сторис и скачать картинку
+  const PXF = '"Dela Gothic One","Arial Black",sans-serif', TXF = '"Onest","Segoe UI",system-ui,sans-serif';
+  let cardBlob = null, cardUrl = null, cardAfterWin = false;
+  // фоны карточки: первый бесплатный, три остальных открываются одной покупкой
+  const CARD_BG = [
+    { n: 'Сцена', bg: '#14102a', panel: '#231d47', edge: '#0c0920', dim: '#a79fc6', g1: 'rgba(58,36,102,.75)', g2: 'rgba(74,22,56,.75)', sw: 'linear-gradient(#3a2466,#14102a 60%,#4a1638)' },
+    { n: 'Прожекторы', bg: '#160b3d', panel: '#2c1c66', edge: '#0b0522', dim: '#c9bdf0', g1: 'rgba(120,80,255,.55)', g2: 'rgba(255,77,109,.45)', deco: 'spots', veil: 0.58, sw: 'linear-gradient(100deg,#160b3d 20%,#ffd65a 32%,#160b3d 44%,#ff4d6d 58%,#160b3d 70%,#5fe0e6 84%,#160b3d)' },
+    { n: 'Звёзды', bg: '#1b1464', grad: ['#241a8c', '#7a1fa8', '#d81b72'], panel: '#3a1f86', edge: '#160b40', dim: '#e6d2f5', g1: 'rgba(80,120,255,.5)', g2: 'rgba(255,120,60,.5)', deco: 'bigstars', veil: 0.26, sw: 'linear-gradient(#241a8c,#7a1fa8 55%,#d81b72)' },
+    { n: 'Конфетти', bg: '#0a4f9c', grad: ['#0b55b0', '#1a86c8', '#12a39a'], panel: '#0c3b78', edge: '#062447', dim: '#d6ecf7', g1: 'rgba(255,255,255,.22)', g2: 'rgba(255,210,63,.35)', deco: 'party', veil: 0.3, sw: 'linear-gradient(135deg,#0b55b0 30%,#ffd23f 31%,#ffd23f 38%,#1a86c8 39%,#1a86c8 55%,#ff4d6d 56%,#ff4d6d 63%,#12a39a 64%)' }];
+  let bgPrev = -1;   // фон, который игрок примеряет, пока не купил
+  const shopState = () => G.S.shop || (G.S.shop = { ids: [], bg: false, sel: 0 });
+  const bgShown = () => bgPrev >= 0 ? bgPrev : (shopState().bg ? shopState().sel : 0) || 0;
+  function drawCard(cv) {
+    const d = cardData(), c = cv.getContext('2d'), W = 1080, H = 1920, u = 10.8, X = 6 * u, CW = W - 12 * u;
+    const T = CARD_BG[bgShown()] || CARD_BG[0], NIGHT = T.bg, PANEL = T.panel, EDGE = T.edge, INK = '#f6ecd4', DIM = T.dim, HOT = '#ff4d6d', COIN = '#ffd23f';
+    const fitFont = (t, wt, size, fam, max, min) => { for (; size > min; size -= 2) { c.font = wt + ' ' + size + 'px ' + fam; if (c.measureText(t).width <= max) break; } c.font = wt + ' ' + size + 'px ' + fam; return size; };
+    const cut = (t, max) => { if (c.measureText(t).width <= max) return t; while (t.length > 3 && c.measureText(t + '…').width > max) t = t.slice(0, -1); return t.trimEnd() + '…'; };
+    c.setTransform(1, 0, 0, 1, 0, 0); c.textBaseline = 'alphabetic'; c.textAlign = 'left';
+    c.fillStyle = NIGHT; c.fillRect(0, 0, W, H);
+    const glow = (cx, cy, rx, ry, col) => { c.save(); c.translate(cx, cy); c.scale(rx, ry); const g = c.createRadialGradient(0, 0, 0, 0, 0, 1); g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(-1, -1, 2, 2); c.restore(); };
+    glow(W / 2, 0, W * 0.75, H * 0.36, T.g1); glow(W / 2, H, W * 0.6, H * 0.28, T.g2);
+    let sd = 12345; const rnd = () => (sd = (sd * 1103515245 + 12345) >>> 0) / 4294967296;
+    const cell = (cx, cy, w, h, col) => { c.fillStyle = col; c.fillRect(cx * 8, cy * 8, w * 8, h * 8); };
+    if (T.grad) { const g = c.createLinearGradient(0, 0, 0, H); T.grad.forEach((col, i) => g.addColorStop(i / (T.grad.length - 1), col)); c.fillStyle = g; c.fillRect(0, 0, W, H); glow(W / 2, 0, W * 0.75, H * 0.3, T.g1); glow(W / 2, H, W * 0.7, H * 0.26, T.g2); }
+    if (T.deco === 'spots') {   // лучи прожекторов: рисуем мелко и растягиваем, чтобы края были пиксельными
+      const lo = document.createElement('canvas'); lo.width = 135; lo.height = 240; const l = lo.getContext('2d'); l.globalCompositeOperation = 'lighter';
+      const beams = [[10, 34, 26, '255,214,90', .30], [44, 8, 22, '255,77,109', .30], [70, 112, 24, '95,224,230', .28], [100, 62, 26, '255,154,61', .26], [128, 128, 22, '190,150,255', .30], [24, 96, 18, '255,255,255', .12]];
+      for (const [x0, x1, hw, col, al] of beams) for (const [k, a2] of [[1, al * 0.55], [0.5, al]]) { l.fillStyle = 'rgba(' + col + ',' + a2 + ')'; l.beginPath(); l.moveTo(x0 - 3 * k, 0); l.lineTo(x0 + 3 * k, 0); l.lineTo(x1 + hw * k, 240); l.lineTo(x1 - hw * k, 240); l.closePath(); l.fill(); }
+      c.imageSmoothingEnabled = false; c.drawImage(lo, 0, 0, W, H);
+      for (const [x0, , , col] of beams.slice(0, 5)) { cell(x0 - 4, 0, 8, 2, 'rgba(' + col + ',.95)'); cell(x0 - 2, 2, 4, 1, 'rgba(255,255,255,.9)'); }
+      for (let i = 0; i < 70; i++) cell(Math.floor(rnd() * 135), Math.floor(rnd() * 240), 1, 1, 'rgba(255,255,255,' + (0.1 + rnd() * 0.25) + ')');
+    }
+    if (T.deco === 'bigstars') {
+      for (let i = 0; i < 170; i++) cell(Math.floor(rnd() * 135), Math.floor(rnd() * 240), 1, 1, i % 3 ? 'rgba(255,255,255,' + (0.35 + rnd() * 0.5) + ')' : 'rgba(255,210,63,' + (0.5 + rnd() * 0.5) + ')');
+      const spark = (sx, sy, r, col) => { for (let k = -r; k <= r; k++) { cell(sx + k, sy, 1, 1, col); cell(sx, sy + k, 1, 1, col); } if (r > 1) for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) cell(sx + dx, sy + dy, 1, 1, col); if (r > 2) cell(sx - 1, sy - 1, 3, 3, '#fff8d6'); };
+      for (let i = 0; i < 26; i++) spark(Math.floor(rnd() * 135), Math.floor(rnd() * 240), 1, i % 2 ? '#ffffff' : '#ffd23f');
+      for (const [sx, sy, r] of [[12, 9, 4], [122, 14, 5], [128, 86, 3], [6, 118, 3], [124, 168, 4], [9, 214, 5], [112, 226, 3], [64, 6, 3], [70, 232, 4]]) spark(sx, sy, r, '#ffd23f');
+    }
+    if (T.deco === 'party') {
+      const cols = ['#ff4d6d', '#ffd23f', '#f6ecd4', '#ff9a3d', '#7be36a', '#b48cff', '#ffffff'];
+      for (let i = 0; i < 300; i++) { const px = Math.floor(rnd() * 135), py = Math.floor(rnd() * 240), col = cols[i % cols.length], k = i % 5, mid = px > 9 && px < 125 && py > 26 && py < 214;
+        if (mid && rnd() < 0.55) continue; c.globalAlpha = mid ? 0.55 : 1;
+        if (k === 0) cell(px, py, 2, 1, col); else if (k === 1) cell(px, py, 1, 2, col); else if (k === 2) { cell(px, py, 1, 1, col); cell(px + 1, py + 1, 1, 1, col); cell(px + 2, py, 1, 1, col); cell(px + 3, py + 1, 1, 1, col); } else if (k === 3) { cell(px, py, 1, 1, col); cell(px + 1, py + 1, 1, 1, col); cell(px, py + 2, 1, 1, col); } else cell(px, py, 1, 1, col); }
+      c.globalAlpha = 1;
+    }
+    if (T.veil) { c.fillStyle = 'rgba(8,4,28,' + T.veil + ')'; c.fillRect(X - 3 * u, 17 * u, CW + 6 * u, H - 23 * u); }   // затемнение под текстом, чтобы на ярком фоне всё читалось
+    // шапка: логотип и плашка
+    let y = 21 * u; const lg = $('#start .logo'), lw = 30 * u, lh = lg.naturalWidth ? lw * lg.naturalHeight / lg.naturalWidth : 10 * u;
+    c.imageSmoothingEnabled = false; if (lg.naturalWidth) c.drawImage(lg, X, y, lw, lh);
+    c.font = '400 ' + 3 * u + 'px ' + PXF; const tag = 'СТАДИОН ВЗЯТ', tw = c.measureText(tag).width + 4.4 * u, th = 6 * u, tx = W - X - tw, ty = y + (lh - th) / 2;
+    c.fillStyle = '#8a1c33'; c.fillRect(tx, ty + 0.8 * u, tw, th); c.fillStyle = HOT; c.fillRect(tx, ty, tw, th); c.fillStyle = '#14102a'; c.fillText(tag, tx + 2.2 * u, ty + th * 0.68);
+    // название группы
+    y += lh + 2.2 * u; const ns = fitFont(d.name, '400', 11 * u, PXF, CW, 5 * u); y += ns * 0.92;
+    c.fillStyle = HOT; c.fillText(d.name, X + 0.7 * u, y + 0.7 * u); c.fillStyle = COIN; c.fillText(d.name, X, y);
+    // фото состава: кадр сцены в рамке
+    y += 3.4 * u; const pw = CW - 2 * u, pad = 1.4 * u, iw = pw - 2 * pad, ih = Math.round(iw * 102 / 240), cap = 6 * u, ph = pad + ih + cap;
+    c.save(); c.translate(X + u + pw / 2, y + ph / 2); c.rotate(-1.2 * Math.PI / 180); c.translate(-pw / 2, -ph / 2);
+    c.fillStyle = HOT; c.fillRect(1.4 * u, 1.4 * u, pw, ph); c.fillStyle = INK; c.fillRect(0, 0, pw, ph);
+    c.fillStyle = '#0c0920'; c.fillRect(pad, pad, iw, ih); c.imageSmoothingEnabled = false; try { c.drawImage($('#cv'), 0, 26, 240, 102, pad, pad, iw, ih); } catch (e) {}
+    c.font = '600 ' + 2.9 * u + 'px ' + TXF; c.fillStyle = '#3a2d5e'; c.textAlign = 'right'; c.fillText('Стадион · ' + fmt(LV[5].goalL) + ' слушателей', pw - pad - 0.6 * u, pad + ih + cap * 0.62); c.textAlign = 'left'; c.restore();
+    // цифры
+    y += ph + 3.2 * u; const gap = 2 * u, un = (CW - 2 * gap) / 3.25, sh = 10.6 * u, cols = [[d.songs, d.songsW, un], [d.albums, d.albumsW, un], [fmt(d.L), 'слушателей', un * 1.25]]; let sx = X;
+    for (const [n, w, cw] of cols) { c.fillStyle = EDGE; c.fillRect(sx, y + 0.8 * u, cw, sh); c.fillStyle = PANEL; c.fillRect(sx, y, cw, sh);
+      c.fillStyle = INK; c.font = '400 ' + 5.6 * u + 'px ' + PXF; c.fillText(String(n), sx + 2.2 * u, y + 5.9 * u); c.fillStyle = DIM; c.font = '500 ' + 2.9 * u + 'px ' + TXF; c.fillText(w, sx + 2.2 * u, y + 9.2 * u); sx += cw + gap; }
+    // главные хиты
+    y += sh + 4.8 * u; c.font = '400 ' + 3 * u + 'px ' + PXF; c.fillStyle = DIM; const hh = 'ГЛАВНЫЕ ХИТЫ'; c.fillText(hh, X, y); const hw = c.measureText(hh).width; c.fillStyle = PANEL; c.fillRect(X + hw + 2 * u, y - 1.3 * u, CW - hw - 2 * u, 0.5 * u);
+    y += 1.6 * u;
+    for (let i = 0; i < 3; i++) { const h = d.hits[i]; y += 4.9 * u; if (!h) continue;
+      c.font = '600 ' + 3 * u + 'px ' + TXF; const qw = c.measureText(h.q).width; c.fillStyle = i ? '#5fe0e6' : '#ff9a3d'; c.textAlign = 'right'; c.fillText(h.q, W - X, y); c.textAlign = 'left';
+      c.font = '400 ' + 4.2 * u + 'px ' + PXF; c.fillStyle = HOT; c.fillText(String(i + 1), X, y); c.fillStyle = INK; fitFont(h.n, '400', 4.2 * u, PXF, CW - 6 * u - qw - 2 * u, 3.2 * u); c.fillText(cut(h.n, CW - 6 * u - qw - 2 * u), X + 6 * u, y); }
+    // путь
+    y += 3.4 * u; const bh = 13.6 * u; c.fillStyle = '#8a5a0a'; c.fillRect(X, y + u, CW, bh); c.fillStyle = COIN; c.fillRect(X, y, CW, bh);
+    c.fillStyle = '#14102a'; c.font = '400 ' + 7.6 * u + 'px ' + PXF; const mt = d.min + ' мин'; c.fillText(mt, X + 3 * u, y + bh * 0.68); const mx = X + 3 * u + c.measureText(mt).width + 3 * u, mw = W - X - mx - 2 * u;
+    c.font = '600 ' + 3.3 * u + 'px ' + TXF; c.fillText('в игре — это', mx, y + 4.2 * u); c.fillText('настоящей жизни группы', mx, y + 11.6 * u); fitFont(d.life, '400', 3.9 * u, PXF, mw, 2.6 * u); c.fillText(d.life, mx, y + 8.1 * u);
+    // цитата критика
+    y += bh + 3.6 * u; c.font = '500 ' + 3.7 * u + 'px ' + TXF; const qx = X + 4.2 * u, qmax = CW - 4.2 * u, lines = []; let ln = '';
+    for (const w of d.quote.split(' ')) { const t = ln ? ln + ' ' + w : w; if (c.measureText(t).width > qmax && ln) { lines.push(ln); ln = w; } else ln = t; } if (ln) lines.push(ln);
+    const lhq = 4.7 * u, qh = lines.length * lhq + 4.4 * u; c.fillStyle = HOT; c.fillRect(X, y - 0.6 * u, 1.2 * u, qh); c.fillStyle = INK; lines.forEach((t, i) => c.fillText(t, qx, y + 3.2 * u + i * lhq));
+    c.fillStyle = DIM; c.font = '500 ' + 2.9 * u + 'px ' + TXF; c.fillText(cut('— ' + d.critic, qmax), qx, y + lines.length * lhq + 3.4 * u);
+    // подпись
+    c.textAlign = 'center'; const f1 = 'Собери свою группу: ', f2 = '«Громко и вместе»', f3 = ' в Telegram'; c.font = '600 ' + 3 * u + 'px ' + TXF; const w1 = c.measureText(f1).width, w3 = c.measureText(f3).width; c.font = '400 ' + 2.9 * u + 'px ' + PXF; const w2 = c.measureText(f2).width;
+    let fx = (W - w1 - w2 - w3) / 2; const fy = H - 9 * u; c.textAlign = 'left'; c.font = '600 ' + 3 * u + 'px ' + TXF; c.fillStyle = DIM; c.fillText(f1, fx, fy); fx += w1; c.font = '400 ' + 2.9 * u + 'px ' + PXF; c.fillStyle = INK; c.fillText(f2, fx, fy); fx += w2; c.font = '600 ' + 3 * u + 'px ' + TXF; c.fillStyle = DIM; c.fillText(f3, fx, fy);
+  }
+  let cardRender = () => {};
+  function bgRow() {   // выбор фона: показываем только там, где работает оплата, или если фоны уже куплены
+    const st = shopState(), row = $('#bgRow'), on = shopOn() || st.bg; row.hidden = !on; $('#card').classList.toggle('shop', on); if (!on) { $('#bgBuy').hidden = true; $('#cardAct').hidden = false; return; }
+    const cur = bgShown(), locked = !st.bg && cur > 0;
+    row.innerHTML = CARD_BG.map((t, i) => '<button data-i="' + i + '" class="' + (i === cur ? 'on' : '') + '"><i style="background:' + t.sw + '"></i>' + t.n + (i && !st.bg ? '<small>★ 5</small>' : '') + '</button>').join('');
+    $('#bgBuy').hidden = !locked; $('#cardAct').hidden = locked;   // примеряемый фон нельзя сохранить, пока он не куплен
+  }
+  $('#bgRow').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const i = +b.dataset.i, st = shopState(); AU.sfx('tap');
+    if (st.bg || i === 0) { st.sel = st.bg ? i : 0; bgPrev = -1; save(); } else bgPrev = i;
+    cardBlob = null; cardUrl = null; cardRender(); bgRow(); });
+  $('#bgBuy').addEventListener('click', () => buy('bg'));
+  function showCard(afterWin) {
+    cardAfterWin = !!afterWin; cardBlob = null; cardUrl = null; set($('#cardNext'), afterWin ? 'Дальше' : 'Закрыть'); $('#card').hidden = false; $('#card').scrollTop = 0;
+    const cv = $('#cardC'), render = () => { drawCard(cv); try { cv.toBlob(b => { cardBlob = b; }, 'image/jpeg', 0.92); } catch (e) {} };   // картинку готовим заранее: «Поделиться» должно сработать сразу по нажатию
+    cardRender = render; bgPrev = -1; bgRow();
+    render(); const F = document.fonts; if (F && F.load) Promise.all([F.load('400 40px "Dela Gothic One"', 'Яя'), F.load('500 40px "Onest"', 'Яя'), F.load('600 40px "Onest"', 'Яя')]).then(render, () => {});
+  }
+  const cardName = () => 'gromko-i-vmeste.jpg', TG = () => { try { const t = window.Telegram && window.Telegram.WebApp; return t && t.initData ? t : null; } catch (e) { return null; } };
+  const tgCan = (t, v) => t && t.isVersionAtLeast && t.isVersionAtLeast(v);
+  async function cardUpload() {   // выкладываем картинку на скрипт бота и получаем ссылку: Telegram принимает только https-адрес
+    if (cardUrl) return cardUrl; if (!SHARE_API || !cardBlob) return null;
+    const r = await fetch(SHARE_API + '/card', { method: 'POST', headers: { 'content-type': 'image/jpeg' }, body: cardBlob }); if (!r.ok) throw new Error('upload ' + r.status);
+    cardUrl = (await r.json()).url; return cardUrl;
+  }
+  function cardFull() { if (!cardBlob) return; const im = $('#cardImg'); if (im.src) URL.revokeObjectURL(im.src); im.src = URL.createObjectURL(cardBlob); $('#cardFull').hidden = false; }   // запасной путь: показать картинку, её можно зажать пальцем
+  async function cardShare() {
+    if (!cardBlob) return; const t = TG();
+    try { const f = new File([cardBlob], cardName(), { type: 'image/jpeg' }); if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { if (tgCan(t, '7.8') && t.shareToStory) { const url = await cardUpload(); if (url) { t.shareToStory(url, { text: 'Мой путь в игре «Громко и вместе»' }); return; } } } catch (e) {}
+    cardFull();
+  }
+  async function cardSave() {
+    if (!cardBlob) return; const t = TG();
+    try { if (tgCan(t, '8.0') && t.downloadFile) { const url = await cardUpload(); if (url) { t.downloadFile({ url: url + '?dl=1', file_name: cardName() }); return; } } } catch (e) {}
+    if (t) { cardFull(); return; }   // в Telegram без ссылки скачивание не работает: показываем картинку
+    const a = document.createElement('a'); a.href = URL.createObjectURL(cardBlob); a.download = cardName(); document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+  // ---------- покупки за звёзды Telegram
+  const shopOn = () => { const t = TG(); return !!(t && SHARE_API && t.openInvoice && tgCan(t, '6.1')); };
+  const shopPost = async (path, body) => { const t = TG(); const r = await fetch(SHARE_API + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ initData: t.initData }, body)) }); if (!r.ok) throw new Error(path + ' ' + r.status); return r.json(); };
+  let shopBusy = false;
+  async function shopSync() {   // спрашиваем у бота оплаченное и выдаём то, что ещё не выдано на этом устройстве
+    if (!shopOn()) return; const st = shopState(); let got = false;
+    try { const j = await shopPost('/purchases', {});
+      for (const p of j.purchases || []) { if (st.ids.includes(p.id)) continue; st.ids.push(p.id); got = true;
+        if (p.item === 'bg') { st.bg = true; if (bgPrev > 0) st.sel = bgPrev; bgPrev = -1; say('Фоны карточки открыты.', 'hit'); }
+        if (p.item === 'hit') { const now = hitNow(); say(now ? 'Хит сейчас: пишем.' : 'Хит готов — пиши, когда освободишься.', 'hit'); shopPost('/consume', { id: p.id }).catch(() => {}); } }
+      if (st.ids.length > 200) st.ids.splice(0, st.ids.length - 200);
+    } catch (e) {}
+    if (got) { save(); listKey = ''; paint(); if (!$('#card').hidden) { cardBlob = null; cardUrl = null; cardRender(); bgRow(); } }
+  }
+  async function buy(item) {
+    if (!shopOn() || shopBusy) return; shopBusy = true;
+    try { const j = await shopPost('/invoice', { item }); TG().openInvoice(j.link, status => { shopBusy = false; if (status === 'paid') { AU.jingle(1); setTimeout(shopSync, 600); setTimeout(shopSync, 4000); } else if (status === 'failed') say('Оплата не прошла.', 'bad'); }); }
+    catch (e) { shopBusy = false; say('Магазин недоступен. Попробуй позже.', 'bad'); }
+  }
+  // «Хит сейчас»: предложение появляется при нажатии на «Хит», пока таймер не дошёл
+  function offerHit() { const s = G.S, left = Math.max(0, s.starAt - s.t), m = Math.floor(left / 60), sec = Math.floor(left % 60);
+    set($('#buyH'), 'Хит сейчас'); set($('#buyT'), 'Хит будет готов через ' + m + ':' + String(sec).padStart(2, '0') + '. Можно не ждать.'); set($('#buyGo'), 'Написать сейчас за ★ 1'); $('#buyM').hidden = false; AU.sfx('tap'); }
+  $('#buyGo').addEventListener('click', () => { $('#buyM').hidden = true; buy('hit'); });
+  $('#buyNo').addEventListener('click', () => { $('#buyM').hidden = true; });
+  $('#cardShare').addEventListener('click', cardShare); $('#cardSave').addEventListener('click', cardSave);
+  $('#cardBack').addEventListener('click', () => { $('#cardFull').hidden = true; });
+  $('#cardNext').addEventListener('click', () => { $('#card').hidden = true; if (cardAfterWin) $('#win').hidden = false; });
+  $('#mCard').addEventListener('click', () => { $('#menu').hidden = true; showCard(false); });
   $('#winP').addEventListener('click', () => { G.S.mode = 'prestige'; $('#win').hidden = true; say('Престиж: предел — 8 млрд слушателей.', 'hit'); paint(); });
-  $('#winN').addEventListener('click', () => { const s = G.S, done = s.done.includes(s.act) ? s.done : s.done.concat(s.act), seen = keepSeen(s.seen), snd = s.sound; AU.setMusic('', 0); G.S = fresh(); G.S.done = done; G.S.seen = seen; G.S.sound = snd; $('#win').hidden = true; save(); showStart(); });
+  $('#winN').addEventListener('click', () => { const s = G.S, done = s.done.includes(s.act) ? s.done : s.done.concat(s.act), seen = keepSeen(s.seen), snd = s.sound, shop = s.shop; AU.setMusic('', 0); G.S = fresh(); G.S.done = done; G.S.seen = seen; G.S.sound = snd; if (shop) G.S.shop = shop; $('#win').hidden = true; save(); showStart(); });
 
   function begin() { const s = G.S; $('#who').textContent = act().n; fit($('#who')); sndBtn(); AU.setOn(s.sound); music(); listKey = ''; paint(); }
 
@@ -1592,6 +1822,7 @@ const SC = (() => {
     if (!saved) { try { saved = JSON.parse(localStorage.getItem(SAVE)); } catch (e) {} }
     if (saved && typeof saved === 'object' && saved.v === 2 && (saved.act === null || saved.act < ACTS.length || (saved.act === CUSTOM && saved.custom))) { const st = Object.assign({}, G.S.stats, saved.stats); Object.assign(G.S, saved); G.S.stats = st; }
     offline(Date.now());
+    setTimeout(shopSync, 1500);   // оплаченное, но не выданное (например, окно закрыли сразу после оплаты)
     document.querySelectorAll('#tabs button').forEach((b, i) => b.textContent = TABS[i]);
     sndBtn();
     // два атласа спрайтов: основной и пул музыкантов; игра стартует, когда загружены оба
